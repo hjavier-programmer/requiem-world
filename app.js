@@ -1,4 +1,4 @@
-* Requiem World — Premium UI + Private Dignity + Ground View Cinematic + High-Lat Zoom Fix (Full app.js)
+/* Requiem World — Premium UI + Private Dignity + Ground View Cinematic + High-Lat Zoom Fix (Full app.js)
    Works with your current index.html ids:
    #cesiumContainer, homeBtn, searchInput, moodBtn, audioBtn, zoomInBtn, zoomOutBtn
    arrival: #arrival #enterBtn
