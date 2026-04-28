@@ -1117,8 +1117,10 @@ async function boot() {
   setupMoodUI();
   setupSearchUI();
 
-  await initCesium();
+  // Attach the Enter button immediately, even if Cesium takes time to load
   setupArrival();
+
+  await initCesium();
 }
 
 boot().catch((e) => {
