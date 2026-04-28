@@ -1,0 +1,160 @@
+:root {
+  --rq-bg: #05070b;
+  --rq-glass: rgba(10, 12, 16, 0.52);
+  --rq-glass2: rgba(10, 12, 16, 0.4);
+  --rq-border: rgba(255, 255, 255, 0.12);
+  --rq-border2: rgba(255, 255, 255, 0.08);
+  --rq-text: rgba(255, 255, 255, 0.92);
+  --rq-dim: rgba(255, 255, 255, 0.7);
+  --rq-dimmer: rgba(255, 255, 255, 0.55);
+  --rq-accent: rgba(210, 200, 175, 0.95);
+  --rq-accentSoft: rgba(210, 200, 175, 0.25);
+  --rq-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+}
+
+/* Layout */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--rq-bg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+/* 🔥 CRITICAL FIX (this was breaking your render) */
+#cesiumContainer {
+  position: absolute;
+  inset: 0;
+}
+
+/* Topbar */
+.rq-topbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  z-index: 50;
+  pointer-events: none;
+}
+.rq-topbar * {
+  pointer-events: auto;
+}
+
+.rq-pill {
+  background: rgba(8, 10, 14, 0.55);
+  border: 1px solid var(--rq-border2);
+  color: var(--rq-text);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.rq-brand {
+  font-weight: 600;
+  border-color: rgba(210, 200, 175, 0.35);
+}
+
+.rq-searchWrap {
+  flex: 1;
+}
+
+.rq-search {
+  width: 100%;
+  background: rgba(8, 10, 14, 0.42);
+  border: 1px solid var(--rq-border2);
+  color: var(--rq-text);
+  padding: 10px 14px;
+  border-radius: 999px;
+}
+
+.rq-right {
+  display: flex;
+  gap: 10px;
+}
+
+.rq-iconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: rgba(8, 10, 14, 0.55);
+  border: 1px solid var(--rq-border2);
+  color: var(--rq-text);
+}
+
+/* Arrival */
+.rq-arrival {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.rq-arrivalCard {
+  width: min(860px, calc(100vw - 48px));
+  padding: 34px;
+  border-radius: 18px;
+  background: rgba(10, 12, 16, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.rq-arrivalTitle {
+  font-size: 36px;
+  color: var(--rq-text);
+}
+
+.rq-arrivalBtn {
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 12px;
+  background: white;
+  color: black;
+  cursor: pointer;
+}
+
+/* Modals */
+.rq-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.rq-hidden {
+  display: none !important;
+}
+
+.rq-modalCard {
+  border-radius: 16px;
+  background: rgba(10, 12, 16, 0.7);
+  padding: 16px;
+  color: var(--rq-text);
+}
+
+/* Candle image */
+#cardImg {
+  width: 110px;
+  height: 110px;
+  margin: 14px auto;
+}
+
+/* Buttons */
+.rq-actionBtn {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.92);
+}
