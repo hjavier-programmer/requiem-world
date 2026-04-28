@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Requiem World</title>
+
+    <!-- Cesium -->
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+
+    <!-- YOUR CSS (fixed path) -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <!-- Cesium mount -->
+    <div id="cesiumContainer"></div>
+
+    <!-- Top UI -->
+    <div class="rq-topbar">
+      <button class="rq-pill rq-brand" id="homeBtn">Requiem World</button>
+
+      <div class="rq-searchWrap">
+        <input
+          id="searchInput"
+          class="rq-search"
+          placeholder="Search a public candle by name..."
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="rq-right">
+        <button class="rq-pill" id="moodBtn">reflective</button>
+        <button class="rq-iconBtn" id="audioBtn" title="Audio">♪</button>
+        <button class="rq-iconBtn" id="zoomInBtn" title="Zoom In">+</button>
+        <button class="rq-iconBtn" id="zoomOutBtn" title="Zoom Out">−</button>
+      </div>
+    </div>
+
+    <!-- Arrival -->
+    <div class="rq-arrival" id="arrival">
+      <div class="rq-arrivalCard">
+        <div class="rq-arrivalKicker">REQUIEM WORLD</div>
+        <h1 class="rq-arrivalTitle">This world moves at the pace of memory.</h1>
+        <div class="rq-arrivalSub">
+          Walk gently. Every light carries a life.
+        </div>
+        <button class="rq-arrivalBtn" id="enterBtn">Enter the World</button>
+        <div class="rq-arrivalNote">Atmosphere adapts gently.</div>
+      </div>
+    </div>
+
+    <!-- Notice modal -->
+    <div class="rq-modal rq-hidden" id="notice">
+      <div class="rq-modalCard rq-modalSmall">
+        <div class="rq-modalHeader">
+          <div class="rq-modalTitle" id="noticeTitle">Notice</div>
+          <button class="rq-x" id="noticeClose">×</button>
+        </div>
+        <div class="rq-modalBody" id="noticeBody"></div>
+      </div>
+    </div>
+
+    <!-- Candle card modal -->
+    <div class="rq-modal rq-hidden" id="card">
+      <div class="rq-modalCard rq-modalWide">
+        <div class="rq-modalHeader">
+          <div>
+            <div class="rq-modalTitle" id="cardTitle">Candle</div>
+            <div class="rq-modalSubtitle" id="cardSubtitle"></div>
+          </div>
+          <button class="rq-x" id="cardClose">×</button>
+        </div>
+
+        <div class="rq-candleCenter">
+          <img id="cardImg" class="rq-candleImg" alt="Candle" />
+        </div>
+
+        <div class="rq-actions" id="cardActions"></div>
+      </div>
+    </div>
+
+    <!-- Audio -->
+    <audio
+      id="bgAudio"
+      preload="auto"
+      loop
+      playsinline
+      crossorigin="anonymous"
+    ></audio>
+
+    <!-- YOUR JS (fixed path) -->
+    <script src="app.js"></script>
+  </body>
+</html>
