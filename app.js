@@ -1,25 +1,11 @@
-/* Requiem World — Premium UI + Private Dignity + Ground View Cinematic + High-Lat Zoom Fix (Full app.js)
-   Works with your current index.html ids:
-   #cesiumContainer, homeBtn, searchInput, moodBtn, audioBtn, zoomInBtn, zoomOutBtn
-   arrival: #arrival #enterBtn
-   modals: #notice #noticeTitle #noticeBody #noticeClose
-           #card #cardTitle #cardSubtitle #cardImg #cardActions #cardClose
-
-   Key updates:
-   - Private candle copy: "Details are privately held. The light remains."
-   - "Because of you..." used ONLY for actual candle-lighting flows (not Coming Soon)
-   - Coming Soon statements upgraded (Memory Card / Garden / My Candles / Stones)
-   - Ground View is true ground-level, looking up, candle centered
-   - Fix: can’t zoom into higher latitudes (clears constrainedAxis)
-
-   Removed (per your request):
-   - Share Candle
-   - Copy Candle ID
-*/
+/* Requiem World — Bubble API Connected app.js */
 
 const ION_TOKEN =
   (typeof process !== "undefined" && process?.env?.CESIUM_ION_TOKEN) ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2ZjljNTU2NC02MDA5LTQxYTAtYjA0NS1iZThiYjNhNmExMzMiLCJpZCI6MzQ2OTYxLCJpYXQiOjE3NTk1MjYyMjF9.jBCAWAheNm9PCh-5Cn8cx3yGlyj3dVTmlOgLuQZiSME";
+
+const BUBBLE_CANDLE_API =
+  "https://requiemlegacy.com/version-test/api/1.1/obj/candle";
 
 const ASSETS = {
   audio: {
@@ -49,6 +35,9 @@ const CANDLE_IMG = {
   temp_public: ASSETS.candles.unlockedTemporary,
   perm_locked: ASSETS.candles.lockedPermanent,
   perm_public: ASSETS.candles.unlockedPermanent,
+  baseline_universal: ASSETS.candles.unlockedPermanent,
+  baseline_christian: ASSETS.candles.unlockedPermanent,
+  baseline_catholic: ASSETS.candles.unlockedPermanent,
 };
 
 const AUDIO_BY_MOOD = {
@@ -61,7 +50,6 @@ const AUDIO_BY_MOOD = {
 const DEFAULT_MOOD = "reflective";
 const MOODS = ["reflective", "hopeful", "mourning", "grateful"];
 
-// Bubble-provided identity hooks (optional)
 const CURRENT_USER_ID = (() => {
   try {
     return window.REQUIEM_USER_ID || null;
@@ -69,6 +57,7 @@ const CURRENT_USER_ID = (() => {
     return null;
   }
 })();
+
 const SAVED_CANDLE_IDS = (() => {
   try {
     const arr = window.REQUIEM_SAVED_CANDLE_IDS;
@@ -77,13 +66,82 @@ const SAVED_CANDLE_IDS = (() => {
     return new Set();
   }
 })();
+
 function isSavedCandleId(id) {
   return !!(id && SAVED_CANDLE_IDS.has(String(id)));
 }
 
-// Optional: Bubble can pass real candle objects later
+let bubbleApiCandles = null;
+
+async function fetchBubbleCandles() {
+  try {
+    const res = await fetch(BUBBLE_CANDLE_API);
+    const data = await res.json();
+    const results = data?.response?.results || [];
+
+    bubbleApiCandles = results
+      .filter((c) => c.is_world_ready_boolean === true)
+      .map((c) => ({
+        id: c._id,
+        candle_id: c._id,
+
+        cesium_latitude:
+          c.cesium_latitude_number ?? c.lat_number ?? c.lat,
+        cesium_longitude:
+          c.cesium_longitude_number ??
+          c.lon_number ??
+          c.lng_number ??
+          c.longitude_number,
+
+        displayName:
+          c.honoree_display_name_text ||
+          c.honoree_name_text ||
+          c.title_text ||
+          c.owner_display_name_text ||
+          "A Beloved Soul",
+
+        visibility:
+          c.world_visibility_text ||
+          c.visibility_option_visibility ||
+          "Private",
+
+        isBaseline: c.is_baseline_candle_boolean === true,
+        baselineLayer: c.baseline_layer_text || null,
+        baselineType: c.baseline_type_text || null,
+
+        candleKey:
+          c.candleKey_text ||
+          (c.is_baseline_candle_boolean
+            ? `baseline_${String(c.baseline_layer_text || "universal").toLowerCase()}`
+            : c.is_permanent_boolean
+              ? c.is_public_boolean
+                ? "perm_public"
+                : "perm_locked"
+              : c.is_public_boolean
+                ? "temp_public"
+                : "temp_locked"),
+
+        ownerId: c.owner_user || c.Creator || null,
+      }))
+      .filter(
+        (c) =>
+          Number.isFinite(Number(c.cesium_latitude)) &&
+          Number.isFinite(Number(c.cesium_longitude))
+      );
+
+    console.log("[Requiem] Bubble candles loaded:", bubbleApiCandles.length);
+    return bubbleApiCandles;
+  } catch (err) {
+    console.error("[Requiem] Bubble candle API failed:", err);
+    bubbleApiCandles = null;
+    return null;
+  }
+}
+
 function getBubbleCandles() {
   try {
+    if (Array.isArray(bubbleApiCandles)) return bubbleApiCandles;
+
     const arr = window.REQUIEM_CANDLES;
     return Array.isArray(arr) ? arr : null;
   } catch {
@@ -91,7 +149,6 @@ function getBubbleCandles() {
   }
 }
 
-// ---------- DOM helpers ----------
 const $ = (id) => document.getElementById(id);
 const on = (id, evt, fn) => $(id)?.addEventListener(evt, fn);
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -99,6 +156,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 function show(el) {
   el?.classList?.remove("rq-hidden");
 }
+
 function hide(el) {
   el?.classList?.add("rq-hidden");
 }
@@ -111,15 +169,15 @@ function showNotice(bodyText, title = "Notice") {
   if (body) body.textContent = bodyText;
   show(n);
 }
-function hideNotice() {
-  hide($("notice"));
-}
-function showCard() {
-  show($("card"));
-}
+
 function hideCard() {
   hide($("card"));
 }
+
+function showCard() {
+  show($("card"));
+}
+
 function wireModalClose(modalId, closeId) {
   const modal = $(modalId);
   const close = $(closeId);
@@ -136,7 +194,6 @@ function wireModalClose(modalId, closeId) {
   });
 }
 
-// ---------- Bubble emit ----------
 function bubbleEmit(type, payload = {}) {
   const msg = { source: "requiem-world", type, payload };
   try {
@@ -168,12 +225,10 @@ function bubbleEmit(type, payload = {}) {
   return false;
 }
 
-// ✅ “Because of you…” ONLY for candle lighting moments (not Coming Soon)
 function blessingLine() {
   return "Because of you, a soul is remembered.";
 }
 
-// Premium “In Preparation” copy
 const PREP_COPY = {
   MEMORY_CARD: {
     title: "Memory Card — In Preparation",
@@ -198,7 +253,6 @@ function showPrep(key) {
   showNotice(c.body, c.title);
 }
 
-// ---------- Audio ----------
 let bgAudio = null;
 let audioUnlocked = false;
 
@@ -220,6 +274,7 @@ async function fadeVolume(target, ms) {
   const start = bgAudio.volume ?? 1;
   const t0 = performance.now();
   const dur = Math.max(1, ms);
+
   return new Promise((resolve) => {
     function tick(now) {
       const p = clamp((now - t0) / dur, 0, 1);
@@ -292,7 +347,6 @@ function setupAudioUI() {
   });
 }
 
-// ---------- Mood ----------
 function setupMoodUI() {
   let mood = DEFAULT_MOOD;
   const b = $("moodBtn");
@@ -306,7 +360,6 @@ function setupMoodUI() {
   });
 }
 
-// ---------- Search placeholder ----------
 function setupSearchUI() {
   on("searchInput", "keydown", (e) => {
     if (e.key !== "Enter") return;
@@ -314,10 +367,8 @@ function setupSearchUI() {
   });
 }
 
-// ---------- Cesium ----------
 let viewer = null;
 
-// Camera presets
 const CAMERA_HOME = { lon: -30, lat: 20, height: 16000000 };
 const CAMERA_ARRIVAL_START = { lon: -30, lat: 20, height: 34000000 };
 
@@ -326,7 +377,6 @@ let HOME_VIEW = null;
 
 const MAX_ZOOM_OUT = 30000000;
 const MIN_ZOOM_IN = 35;
-
 const LAYER_THRESHOLDS = { FAR: 11000000, MID: 3500000 };
 
 function snapshotCameraView(v) {
@@ -344,6 +394,7 @@ function snapshotCameraView(v) {
     return null;
   }
 }
+
 function flyToView(v, view, duration = 2.4) {
   if (!v || !view) return;
   v.camera.flyTo({
@@ -364,7 +415,6 @@ function getCameraHeight() {
   return c?.height ?? CAMERA_HOME.height;
 }
 
-// Imagery: OSM fallback + ESRI preferred
 function addOSM(v) {
   return v.imageryLayers.addImageryProvider(
     new Cesium.UrlTemplateImageryProvider({
@@ -373,28 +423,32 @@ function addOSM(v) {
     })
   );
 }
+
 async function addESRI(v) {
   const provider = await Cesium.ArcGisMapServerImageryProvider.fromUrl(
     "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
   );
   return v.imageryLayers.addImageryProvider(provider);
 }
+
 async function applyBeautifulImagery(v) {
   if (ION_TOKEN && !ION_TOKEN.includes("PASTE_NEW_ION_TOKEN_HERE")) {
     Cesium.Ion.defaultAccessToken = ION_TOKEN;
   }
+
   v.imageryLayers.removeAll();
   const osm = addOSM(v);
+
   try {
     await addESRI(v);
     v.imageryLayers.remove(osm, true);
   } catch {}
+
   v.scene.globe.enableLighting = true;
   v.scene.highDynamicRange = true;
   v.scene.fog.enabled = false;
 }
 
-// ---------- Twinkle + candle layers ----------
 let layerFarTwinkles = [];
 let layerClusters = [];
 let layerCloseCandles = [];
@@ -423,9 +477,11 @@ function makePoints() {
       });
     }
   });
+
   for (let i = 0; i < 120; i++) {
     pts.push({ lon: randomBetween(-180, 180), lat: randomBetween(-65, 65) });
   }
+
   return pts;
 }
 
@@ -433,6 +489,7 @@ function makeAuraDataUrl(size = 160) {
   const c = document.createElement("canvas");
   c.width = size;
   c.height = size;
+
   const ctx = c.getContext("2d");
   const r = size / 2;
 
@@ -446,8 +503,10 @@ function makeAuraDataUrl(size = 160) {
   ctx.beginPath();
   ctx.arc(r, r, r, 0, Math.PI * 2);
   ctx.fill();
+
   return c.toDataURL("image/png");
 }
+
 const AURA_IMG = makeAuraDataUrl(160);
 
 function clearEntities(list) {
@@ -475,13 +534,15 @@ function updateLayerVisibility() {
   setEntitiesVisible(layerCloseCandles, closeOn);
 
   visibleAnimEntities = [];
+
   if (farOn) visibleAnimEntities = visibleAnimEntities.concat(layerFarTwinkles);
   if (midOn) visibleAnimEntities = visibleAnimEntities.concat(layerClusters);
-  if (closeOn)
+  if (closeOn) {
     visibleAnimEntities = visibleAnimEntities.concat(
       layerCloseAuras,
       layerCloseCandles
     );
+  }
 }
 
 function pickDemoName(i) {
@@ -509,15 +570,18 @@ function buildLayers() {
   layerCloseCandles = [];
 
   const bubbleCandles = getBubbleCandles();
+
   const pts = bubbleCandles
     ? bubbleCandles
         .map((c) => ({
-          lon:
-            Number(c.cesium_longitude ?? c.lon ?? c.longitude ?? c.lng) || null,
-          lat: Number(c.cesium_latitude ?? c.lat ?? c.latitude) || null,
+          lon: Number(c.cesium_longitude ?? c.lon ?? c.longitude ?? c.lng),
+          lat: Number(c.cesium_latitude ?? c.lat ?? c.latitude),
           c,
         }))
-        .filter((x) => typeof x.lon === "number" && typeof x.lat === "number")
+        .filter(
+          (x) =>
+            Number.isFinite(Number(x.lon)) && Number.isFinite(Number(x.lat))
+        )
     : makePoints().map((p) => ({ ...p, c: null }));
 
   layerFarTwinkles = pts.slice(0, 180).map((p) =>
@@ -566,6 +630,7 @@ function buildLayers() {
 
   pts.slice(0, 140).forEach((p, i) => {
     let candleKey = "temp_public";
+
     if (p.c?.candleKey) candleKey = String(p.c.candleKey);
     else {
       if (i % 11 === 0) candleKey = "temp_locked";
@@ -574,20 +639,27 @@ function buildLayers() {
     }
 
     const img = CANDLE_IMG[candleKey] || CANDLE_IMG.perm_public;
-    const isLocked = candleKey === "temp_locked" || candleKey === "perm_locked";
+
+    const isLocked =
+      candleKey === "temp_locked" ||
+      candleKey === "perm_locked" ||
+      String(p.c?.visibility || "").toLowerCase() === "private";
 
     const candleId = String(p.c?.id ?? p.c?.candle_id ?? `demo-${i}`);
     const ownerId =
       String(p.c?.ownerId ?? p.c?.owner_user ?? p.c?.owner ?? "") || null;
 
     const displayName =
-      (p.c?.honoree_display_name ||
+      (p.c?.displayName ||
+        p.c?.honoree_display_name ||
         p.c?.honoree_full_name ||
-        p.c?.displayName ||
         pickDemoName(i)) + (p.c ? "" : ` ${i + 1}`);
 
     const visibility = String(p.c?.visibility ?? "").toLowerCase();
-    const isPublicFlag = visibility ? visibility !== "private" : !isLocked;
+    const isPublicFlag =
+      visibility === "public" ||
+      visibility === "baseline" ||
+      (!visibility && !isLocked);
 
     const pos = Cesium.Cartesian3.fromDegrees(p.lon, p.lat, HOVER_METERS);
 
@@ -623,7 +695,7 @@ function buildLayers() {
         height: 42,
         scale: 1.0,
         horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-        verticalOrigin: Cesium.HorizontalOrigin.BOTTOM,
+        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
         disableDepthTestDistance: 900000,
         translucencyByDistance: new Cesium.NearFarScalar(1.5e6, 1.0, 1.6e7, 0),
         scaleByDistance: new Cesium.NearFarScalar(2.0e5, 1.0, 2.2e6, 0.65),
@@ -638,8 +710,9 @@ function buildLayers() {
         isLocked,
         isPublicFlag,
         displayName,
-        honoree_display_name: p.c?.honoree_display_name || null,
-        honoree_full_name: p.c?.honoree_full_name || null,
+        isBaseline: p.c?.isBaseline || false,
+        baselineLayer: p.c?.baselineLayer || null,
+        baselineType: p.c?.baselineType || null,
         twPhase: Math.random() * Math.PI * 2,
         twSpeed: randomBetween(0.55, 1.05),
         twBase: randomBetween(0.8, 0.92),
@@ -654,8 +727,8 @@ function buildLayers() {
   updateLayerVisibility();
 }
 
-// Twinkle loop
 let twinkleRunning = false;
+
 function startTwinkleLoop() {
   if (twinkleRunning) return;
   twinkleRunning = true;
@@ -672,7 +745,6 @@ function startTwinkleLoop() {
       const speed = p.twSpeed?.getValue?.() ?? p.twSpeed ?? 1;
       const base = p.twBase?.getValue?.() ?? p.twBase ?? 0.6;
       const amp = p.twAmp?.getValue?.() ?? p.twAmp ?? 0.2;
-
       const pulse = base + Math.sin(t * speed + phase) * amp;
       const alpha = clamp(pulse, 0.08, 1.0);
 
@@ -714,7 +786,6 @@ function startTwinkleLoop() {
   requestAnimationFrame(tick);
 }
 
-// ---------- Click logic ----------
 function isOwnerOfEntity(entity) {
   const ownerId =
     entity?.properties?.ownerId?.getValue?.() ??
@@ -728,8 +799,17 @@ function isPublicEffective(entity) {
     entity?.properties?.candleKey?.getValue?.() ??
     entity?.properties?.candleKey ??
     "perm_public";
+
+  const visibility =
+    entity?.properties?.isPublicFlag?.getValue?.() ??
+    entity?.properties?.isPublicFlag ??
+    false;
+
   const locked = key === "temp_locked" || key === "perm_locked";
+
+  if (visibility) return true;
   if (!locked) return true;
+
   return isOwnerOfEntity(entity);
 }
 
@@ -746,7 +826,6 @@ function readDisplayName(entity) {
   return (n && String(n).trim()) || null;
 }
 
-// ✅ Ground View — true ground-level, looking up, candle centered
 function flyToGroundView(entity) {
   if (!viewer || !entity) return;
 
@@ -757,17 +836,16 @@ function flyToGroundView(entity) {
   const carto = Cesium.Cartographic.fromCartesian(pos);
   const lon = carto.longitude;
   const lat = carto.latitude;
-
   const groundTarget = Cesium.Cartesian3.fromRadians(lon, lat, 2.0);
   const sphere = new Cesium.BoundingSphere(groundTarget, 18.0);
 
-  const heading = viewer.camera.heading;
-  const pitchUp = Cesium.Math.toRadians(8);
-  const range = 260;
-
   viewer.camera.flyToBoundingSphere(sphere, {
     duration: 2.25,
-    offset: new Cesium.HeadingPitchRange(heading, pitchUp, range),
+    offset: new Cesium.HeadingPitchRange(
+      viewer.camera.heading,
+      Cesium.Math.toRadians(8),
+      260
+    ),
     easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
   });
 }
@@ -789,22 +867,28 @@ function openCandleCard(entity) {
     entity?.properties?.candleKey?.getValue?.() ??
     entity?.properties?.candleKey ??
     "perm_public";
+
   const candleId =
     entity?.properties?.candleId?.getValue?.() ??
     entity?.properties?.candleId ??
     null;
 
+  const isBaseline =
+    entity?.properties?.isBaseline?.getValue?.() ??
+    entity?.properties?.isBaseline ??
+    false;
+
   const img = CANDLE_IMG[candleKey] || CANDLE_IMG.perm_public;
   const publicEffective = isPublicEffective(entity);
   const saved = isSavedCandleId(candleId);
 
-  const typeLabel = (() => {
-    if (candleKey === "perm_public" || candleKey === "perm_locked")
-      return "Permanent Candle";
-    if (candleKey === "temp_public" || candleKey === "temp_locked")
-      return "Temporary Candle";
-    return "Candle";
-  })();
+  const typeLabel = isBaseline
+    ? "Baseline Candle"
+    : candleKey === "perm_public" || candleKey === "perm_locked"
+      ? "Permanent Candle"
+      : candleKey === "temp_public" || candleKey === "temp_locked"
+        ? "Temporary Candle"
+        : "Candle";
 
   const displayName = readDisplayName(entity);
   const title = publicEffective ? displayName || typeLabel : "Private Candle";
@@ -813,8 +897,13 @@ function openCandleCard(entity) {
     ? `${typeLabel} • Public candle\nSome candles are public. Some are private. Dignity is always equal.`
     : "Details are privately held. The light remains.";
 
-  if (saved && publicEffective)
+  if (isBaseline) {
+    subtitle = "A seeded light in the World of Remembrance.";
+  }
+
+  if (saved && publicEffective) {
     subtitle += "\nSaved candles glow slightly brighter.";
+  }
 
   if (cardTitle) cardTitle.textContent = title;
   if (cardSubtitle) cardSubtitle.textContent = subtitle;
@@ -847,12 +936,6 @@ function openCandleCard(entity) {
   }
 
   if (actions) actions.innerHTML = "";
-
-  function lightTempCandle() {
-    hideCard();
-    const ok = bubbleEmit("LIGHT_TEMP_CANDLE", payload);
-    if (!ok) showNotice(blessingLine(), "Light a Temporary Candle");
-  }
 
   if (!publicEffective) {
     addBtn(
@@ -899,7 +982,15 @@ function openCandleCard(entity) {
   });
 
   if (candleKey === "perm_public") {
-    addBtn("Light a Temporary Candle", () => lightTempCandle(), true);
+    addBtn(
+      "Light a Temporary Candle",
+      () => {
+        hideCard();
+        const ok = bubbleEmit("LIGHT_TEMP_CANDLE", payload);
+        if (!ok) showNotice(blessingLine(), "Light a Temporary Candle");
+      },
+      true
+    );
   } else {
     addBtn(
       "Return",
@@ -918,11 +1009,13 @@ function setupCandleClick() {
   if (!viewer) return;
 
   const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
   handler.setInputAction((movement) => {
     const picks = viewer.scene.drillPick(movement.position, 8);
     if (!picks || !picks.length) return;
 
     let candleEntity = null;
+
     for (const p of picks) {
       const e = p?.id;
       const kind =
@@ -932,13 +1025,12 @@ function setupCandleClick() {
         break;
       }
     }
-    if (!candleEntity) return;
 
+    if (!candleEntity) return;
     openCandleCard(candleEntity);
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 }
 
-// ---------- Arrival ----------
 function setupArrival() {
   const arrival = $("arrival");
   const enterBtn = $("enterBtn");
@@ -990,6 +1082,7 @@ function setupArrival() {
 
 function returnToHome() {
   if (!viewer) return;
+
   const arrival = $("arrival");
   if (arrival) arrival.style.display = "none";
 
@@ -1007,22 +1100,23 @@ function returnToHome() {
   }
 }
 
-// ---------- Zoom buttons ----------
 function zoomStep(isIn) {
   if (!viewer) return;
+
   const carto = viewer.camera.positionCartographic;
   const h = carto?.height ?? CAMERA_HOME.height;
   const step = clamp(h * 0.22, 30, 4200000);
+
   if (isIn) viewer.camera.zoomIn(step);
   else viewer.camera.zoomOut(step);
+
   viewer.scene.requestRender();
 }
 
-// ---------- Init Cesium ----------
 async function initCesium() {
   if (typeof Cesium === "undefined") {
     showNotice(
-      "Cesium did not load. In CodeSandbox, make sure Cesium is included/available to app.js (dependency + proper setup).",
+      "Cesium did not load. Make sure Cesium is included before app.js.",
       "Load Error"
     );
     return;
@@ -1062,7 +1156,6 @@ async function initCesium() {
   viewer.scene.screenSpaceCameraController.enableZoom = true;
   viewer.scene.screenSpaceCameraController.enableTranslate = true;
 
-  // ✅ FIX: higher latitude zoom/navigation issues
   viewer.scene.screenSpaceCameraController.constrainedAxis = undefined;
   viewer.camera.constrainedAxis = undefined;
 
@@ -1083,11 +1176,14 @@ async function initCesium() {
 
   await applyBeautifulImagery(viewer);
 
+  await fetchBubbleCandles();
+
   buildLayers();
   setupCandleClick();
   startTwinkleLoop();
 
   let raf = null;
+
   viewer.camera.changed.addEventListener(() => {
     if (raf) cancelAnimationFrame(raf);
     raf = requestAnimationFrame(() => {
@@ -1101,7 +1197,6 @@ async function initCesium() {
   on("zoomOutBtn", "click", () => zoomStep(false));
 }
 
-// ---------- UI wiring ----------
 function setupUI() {
   wireModalClose("notice", "noticeClose");
   wireModalClose("card", "cardClose");
@@ -1110,14 +1205,12 @@ function setupUI() {
   if (arrival) arrival.style.pointerEvents = "auto";
 }
 
-// ---------- Boot ----------
 async function boot() {
   setupUI();
   setupAudioUI();
   setupMoodUI();
   setupSearchUI();
 
-  // Attach the Enter button immediately, even if Cesium takes time to load
   setupArrival();
 
   await initCesium();
