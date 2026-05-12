@@ -39,7 +39,232 @@ const CANDLE_IMG = {
   baseline_christian: ASSETS.candles.unlockedPermanent,
   baseline_catholic: ASSETS.candles.unlockedPermanent,
 };
+function getUserFaithTrack() {
+  const params = new URLSearchParams(window.location.search);
+  return String(
+    params.get("faith") ||
+      window.REQUIEM_FAITH_TRACK ||
+      "universal"
+  ).toLowerCase();
+}
 
+function canSeeBaseline(layer) {
+  const userTrack = getUserFaithTrack();
+  const candleLayer = String(layer || "universal").toLowerCase();
+
+  if (userTrack === "catholic") return true;
+  if (userTrack === "christian") {
+    return candleLayer === "universal" || candleLayer === "christian";
+  }
+  return candleLayer === "universal";
+}
+
+function b(id, name, layer, type, lat, lon) {
+  return {
+    id: `baseline-${id}`,
+    candle_id: `baseline-${id}`,
+    displayName: name,
+    visibility: "Baseline",
+    isBaseline: true,
+    baselineLayer: layer,
+    baselineType: type,
+    candleKey: `baseline_${layer}`,
+    cesium_latitude: lat,
+    cesium_longitude: lon,
+  };
+}
+
+const BASELINE_CANDLES = [
+  // UNIVERSAL — literary / storytelling
+  b("shakespeare", "William Shakespeare", "universal", "literary", 52.1917, -1.7080),
+  b("chaucer", "Geoffrey Chaucer", "universal", "literary", 51.5072, -0.1276),
+  b("homer", "Homer", "universal", "literary", 38.4192, 27.1287),
+  b("gilgamesh", "The Epic of Gilgamesh", "universal", "literary", 31.3242, 45.6369),
+  b("jane-austen", "Jane Austen", "universal", "literary", 51.0608, -1.3131),
+  b("tolstoy", "Leo Tolstoy", "universal", "literary", 54.0719, 37.5267),
+  b("victor-hugo", "Victor Hugo", "universal", "literary", 48.8566, 2.3522),
+  b("stevenson", "Robert Louis Stevenson", "universal", "literary", 55.9533, -3.1883),
+  b("beatrix-potter", "Beatrix Potter", "universal", "literary", 54.3809, -2.9060),
+  b("aa-milne", "A. A. Milne", "universal", "literary", 51.2362, 0.0345),
+  b("dr-seuss", "Dr. Seuss", "universal", "literary", 42.1015, -72.5898),
+  b("eb-white", "E. B. White", "universal", "literary", 44.1560, -68.7436),
+  b("mark-twain", "Mark Twain", "universal", "literary", 39.7084, -91.3585),
+  b("jules-verne", "Jules Verne", "universal", "literary", 47.2184, -1.5536),
+  b("laura-ingalls-wilder", "Laura Ingalls Wilder", "universal", "literary", 44.5436, -92.5552),
+  b("andersen", "Hans Christian Andersen", "universal", "literary", 55.4038, 10.4024),
+  b("tagore", "Rabindranath Tagore", "universal", "literary", 22.5726, 88.3639),
+  b("basho", "Matsuo Bashō", "universal", "literary", 35.6762, 139.6503),
+  b("murasaki", "Murasaki Shikibu", "universal", "literary", 35.0116, 135.7681),
+  b("chinua-achebe", "Chinua Achebe", "universal", "literary", 6.1667, 6.7833),
+  b("khalil-gibran", "Khalil Gibran", "universal", "literary", 34.2500, 36.0167),
+  b("rumi", "Rumi", "universal", "literary", 37.8715, 32.4846),
+  b("sun-tzu", "Sun Tzu", "universal", "literary", 36.6683, 117.0208),
+
+  // UNIVERSAL — dignity / service
+  b("florence-nightingale", "Florence Nightingale", "universal", "dignity", 43.7696, 11.2558),
+  b("clara-barton", "Clara Barton", "universal", "dignity", 42.2626, -71.8023),
+  b("helen-keller", "Helen Keller", "universal", "dignity", 34.7312, -87.7025),
+  b("fred-rogers", "Fred Rogers", "universal", "dignity", 40.3015, -79.5389),
+  b("anne-frank", "Anne Frank", "universal", "dignity", 52.3676, 4.9041),
+  b("harriet-tubman", "Harriet Tubman", "universal", "dignity", 42.9317, -76.5661),
+  b("raoul-wallenberg", "Raoul Wallenberg", "universal", "dignity", 59.3293, 18.0686),
+  b("irena-sendler", "Irena Sendler", "universal", "dignity", 52.2297, 21.0122),
+  b("wangari-maathai", "Wangari Maathai", "universal", "dignity", -0.4167, 36.9500),
+
+  // UNIVERSAL — discovery / beauty / achievement
+  b("galileo", "Galileo Galilei", "universal", "discovery", 43.7228, 10.4017),
+  b("newton", "Isaac Newton", "universal", "discovery", 52.8090, -0.6280),
+  b("kepler", "Johannes Kepler", "universal", "discovery", 48.7758, 9.1829),
+  b("tesla", "Nikola Tesla", "universal", "discovery", 44.5667, 15.3181),
+  b("marie-curie", "Marie Curie", "universal", "discovery", 52.2297, 21.0122),
+  b("pasteur", "Louis Pasteur", "universal", "discovery", 47.0920, 5.4890),
+  b("jonas-salk", "Jonas Salk", "universal", "discovery", 40.7128, -74.0060),
+  b("avicenna", "Ibn Sina / Avicenna", "universal", "discovery", 39.6542, 66.9597),
+  b("al-khwarizmi", "Al-Khwarizmi", "universal", "discovery", 41.3775, 60.3619),
+
+  // UNIVERSAL — music
+  b("beethoven", "Ludwig van Beethoven", "universal", "music", 50.7374, 7.0982),
+  b("mozart", "Wolfgang Amadeus Mozart", "universal", "music", 47.8095, 13.0550),
+  b("chopin", "Frédéric Chopin", "universal", "music", 52.2297, 21.0122),
+  b("vivaldi", "Antonio Vivaldi", "universal", "music", 45.4408, 12.3155),
+  b("louis-armstrong", "Louis Armstrong", "universal", "music", 29.9511, -90.0715),
+  b("duke-ellington", "Duke Ellington", "universal", "music", 38.9072, -77.0369),
+  b("ella-fitzgerald", "Ella Fitzgerald", "universal", "music", 37.0871, -76.4730),
+  b("johnny-cash", "Johnny Cash", "universal", "music", 35.1473, -90.0489),
+  b("miriam-makeba", "Miriam Makeba", "universal", "music", -26.2041, 28.0473),
+  b("ravi-shankar", "Ravi Shankar", "universal", "music", 25.3176, 82.9739),
+  b("teresa-teng", "Teresa Teng", "universal", "music", 23.6978, 120.9605),
+  b("nusrat-fateh-ali-khan", "Nusrat Fateh Ali Khan", "universal", "music", 31.4504, 73.1350),
+  b("villa-lobos", "Heitor Villa-Lobos", "universal", "music", -22.9068, -43.1729),
+
+  // UNIVERSAL — art
+  b("leonardo", "Leonardo da Vinci", "universal", "art", 43.7833, 10.9167),
+  b("michelangelo", "Michelangelo", "universal", "art", 43.7711, 11.2486),
+  b("raphael", "Raphael", "universal", "art", 43.7262, 12.6363),
+  b("donatello", "Donatello", "universal", "art", 43.7711, 11.2486),
+  b("rembrandt", "Rembrandt", "universal", "art", 52.1601, 4.4970),
+  b("vermeer", "Vermeer", "universal", "art", 52.0116, 4.3571),
+  b("monet", "Claude Monet", "universal", "art", 49.0756, 1.5339),
+  b("van-gogh", "Vincent van Gogh", "universal", "art", 51.4381, 5.4752),
+  b("hokusai", "Hokusai", "universal", "art", 35.6762, 139.6503),
+  b("rockwell", "Norman Rockwell", "universal", "art", 42.2876, -73.3204),
+  b("okeeffe", "Georgia O’Keeffe", "universal", "art", 35.6870, -105.9378),
+
+  // UNIVERSAL — olympians
+  b("jesse-owens", "Jesse Owens", "universal", "olympian", 33.5207, -86.8025),
+  b("wilma-rudolph", "Wilma Rudolph", "universal", "olympian", 36.5298, -87.3595),
+  b("emil-zatopek", "Emil Zátopek", "universal", "olympian", 49.8209, 18.2625),
+  b("paavo-nurmi", "Paavo Nurmi", "universal", "olympian", 60.4518, 22.2666),
+  b("mark-spitz", "Mark Spitz", "universal", "olympian", 38.2542, -85.7594),
+  b("peggy-fleming", "Peggy Fleming", "universal", "olympian", 37.7749, -122.4194),
+  b("eric-heiden", "Eric Heiden", "universal", "olympian", 43.0731, -89.4012),
+
+  // CHRISTIAN — scripture
+  b("adam", "Adam", "christian", "scripture", 31.7683, 35.2137),
+  b("eve", "Eve", "christian", "scripture", 31.7683, 35.2137),
+  b("noah", "Noah", "christian", "scripture", 39.7020, 44.2990),
+  b("abraham", "Abraham", "christian", "scripture", 31.5240, 35.1107),
+  b("sarah", "Sarah", "christian", "scripture", 31.5240, 35.1107),
+  b("isaac", "Isaac", "christian", "scripture", 31.5240, 35.1107),
+  b("jacob", "Jacob", "christian", "scripture", 31.5240, 35.1107),
+  b("joseph-ot", "Joseph", "christian", "scripture", 30.0444, 31.2357),
+  b("moses", "Moses", "christian", "scripture", 28.5392, 33.9756),
+  b("miriam", "Miriam", "christian", "scripture", 28.5392, 33.9756),
+  b("ruth", "Ruth", "christian", "scripture", 31.7054, 35.2024),
+  b("david", "David", "christian", "scripture", 31.7683, 35.2137),
+  b("solomon", "Solomon", "christian", "scripture", 31.7683, 35.2137),
+  b("elijah", "Elijah", "christian", "scripture", 32.7940, 35.0150),
+  b("esther", "Esther", "christian", "scripture", 34.7980, 48.5150),
+  b("isaiah", "Isaiah", "christian", "scripture", 31.7683, 35.2137),
+  b("jeremiah", "Jeremiah", "christian", "scripture", 31.7683, 35.2137),
+  b("daniel", "Daniel", "christian", "scripture", 32.1942, 48.2436),
+  b("job", "Job", "christian", "scripture", 30.5852, 36.2384),
+  b("jonah", "Jonah", "christian", "scripture", 36.3400, 43.1300),
+
+  // CHRISTIAN — apostolic / early
+  b("saint-joseph", "Saint Joseph", "christian", "apostolic", 32.6996, 35.3035),
+  b("mary-magdalene", "Mary Magdalene", "christian", "apostolic", 32.8333, 35.5167),
+  b("john-the-baptist", "John the Baptist", "christian", "apostolic", 31.7683, 35.2137),
+  b("lazarus", "Lazarus", "christian", "apostolic", 31.7707, 35.2637),
+  b("peter-apostle", "Peter", "christian", "apostolic", 41.9028, 12.4534),
+  b("andrew-apostle", "Andrew", "christian", "apostolic", 40.6401, 22.9444),
+  b("james-apostle", "James", "christian", "apostolic", 42.8805, -8.5457),
+  b("john-apostle", "John", "christian", "apostolic", 37.9390, 27.3410),
+  b("thomas-apostle", "Thomas", "christian", "apostolic", 13.0827, 80.2707),
+  b("matthew-apostle", "Matthew", "christian", "apostolic", 32.7940, 34.9896),
+  b("stephen-martyr", "Stephen", "christian", "apostolic", 31.7683, 35.2137),
+  b("timothy", "Timothy", "christian", "apostolic", 39.9208, 32.8541),
+  b("barnabas", "Barnabas", "christian", "apostolic", 35.1856, 33.3823),
+  b("lydia", "Lydia", "christian", "apostolic", 41.0112, 24.2867),
+  b("priscilla-aquila", "Priscilla and Aquila", "christian", "apostolic", 41.9028, 12.4964),
+
+  // CHRISTIAN — theology / writers / witness
+  b("augustine", "Saint Augustine", "christian", "theology", 36.9000, 7.7667),
+  b("athanasius", "Saint Athanasius", "christian", "theology", 31.2001, 29.9187),
+  b("chrysostom", "Saint John Chrysostom", "christian", "theology", 41.0082, 28.9784),
+  b("basil", "Saint Basil the Great", "christian", "theology", 38.7205, 35.4826),
+  b("gregory-nazianzus", "Saint Gregory of Nazianzus", "christian", "theology", 38.3500, 34.0300),
+  b("irenaeus", "Saint Irenaeus", "christian", "theology", 45.7640, 4.8357),
+  b("justin-martyr", "Saint Justin Martyr", "christian", "theology", 32.2211, 35.2544),
+  b("ignatius-antioch", "Saint Ignatius of Antioch", "christian", "theology", 36.2021, 36.1600),
+  b("jerome", "Saint Jerome", "christian", "theology", 31.7054, 35.2024),
+  b("ephrem", "Saint Ephrem the Syrian", "christian", "theology", 36.8479, 40.0500),
+  b("cs-lewis", "C. S. Lewis", "christian", "christian_writer", 54.5973, -5.9301),
+  b("george-macdonald", "George MacDonald", "christian", "christian_writer", 57.1497, -2.0943),
+  b("dostoevsky", "Fyodor Dostoevsky", "christian", "christian_writer", 59.9311, 30.3609),
+  b("kierkegaard", "Søren Kierkegaard", "christian", "christian_writer", 55.6761, 12.5683),
+  b("john-bunyan", "John Bunyan", "christian", "christian_writer", 52.1357, -0.4667),
+  b("bonhoeffer", "Dietrich Bonhoeffer", "christian", "witness", 52.5200, 13.4050),
+  b("corrie-ten-boom", "Corrie ten Boom", "christian", "witness", 52.3874, 4.6462),
+  b("wurmbrand", "Richard Wurmbrand", "christian", "witness", 44.4268, 26.1025),
+  b("watchman-nee", "Watchman Nee", "christian", "witness", 31.2304, 121.4737),
+
+  // CATHOLIC — saints / mystics / doctors / popes
+  b("francis-assisi", "Saint Francis of Assisi", "catholic", "saint", 43.0707, 12.6170),
+  b("clare-assisi", "Saint Clare of Assisi", "catholic", "saint", 43.0707, 12.6170),
+  b("benedict", "Saint Benedict", "catholic", "saint", 41.4900, 13.8130),
+  b("dominic", "Saint Dominic", "catholic", "saint", 41.9028, 12.4964),
+  b("ignatius-loyola", "Saint Ignatius of Loyola", "catholic", "saint", 43.1730, -2.2810),
+  b("anthony-padua", "Saint Anthony of Padua", "catholic", "saint", 45.4064, 11.8768),
+  b("padre-pio", "Saint Padre Pio", "catholic", "saint", 41.7060, 15.7277),
+  b("maximilian-kolbe", "Saint Maximilian Kolbe", "catholic", "saint", 50.0347, 19.1783),
+  b("gianna-molla", "Saint Gianna Beretta Molla", "catholic", "saint", 45.4700, 8.8800),
+  b("damien-molokai", "Saint Damien of Molokai", "catholic", "saint", 21.1893, -156.9840),
+  b("vincent-de-paul", "Saint Vincent de Paul", "catholic", "saint", 43.7102, -1.0537),
+  b("joan-of-arc", "Saint Joan of Arc", "catholic", "saint", 48.4439, 5.6750),
+  b("cecilia", "Saint Cecilia", "catholic", "saint", 41.9028, 12.4964),
+  b("therese-lisieux", "Saint Thérèse of Lisieux", "catholic", "mystic", 49.1466, 0.2293),
+  b("teresa-avila", "Saint Teresa of Ávila", "catholic", "mystic", 40.6567, -4.6812),
+  b("john-cross", "Saint John of the Cross", "catholic", "mystic", 41.7667, -2.4667),
+  b("hildegard", "Saint Hildegard of Bingen", "catholic", "mystic", 49.9667, 7.9000),
+  b("faustina", "Saint Faustina Kowalska", "catholic", "mystic", 52.2297, 21.0122),
+  b("aquinas", "Saint Thomas Aquinas", "catholic", "theologian", 41.4920, 13.8330),
+  b("bonaventure", "Saint Bonaventure", "catholic", "theologian", 42.6300, 12.1100),
+  b("anselm", "Saint Anselm", "catholic", "theologian", 45.7370, 7.3200),
+  b("gregory-great", "Pope Saint Gregory the Great", "catholic", "pope", 41.9028, 12.4964),
+  b("leo-great", "Pope Saint Leo the Great", "catholic", "pope", 41.9028, 12.4964),
+  b("john-paul-ii", "Pope Saint John Paul II", "catholic", "pope", 49.8833, 19.4930),
+  b("benedict-xvi", "Pope Benedict XVI", "catholic", "pope", 48.1351, 12.5820),
+  b("john-xxiii", "Pope Saint John XXIII", "catholic", "pope", 45.6648, 9.5780),
+  b("leo-xiii", "Pope Leo XIII", "catholic", "pope", 41.9028, 12.4964),
+  b("newman", "Saint John Henry Newman", "catholic", "theologian", 52.4862, -1.8904),
+  b("fulton-sheen", "Fulton Sheen", "catholic", "theologian", 40.6936, -89.5889),
+  b("edith-stein", "Saint Edith Stein", "catholic", "theologian", 51.1079, 17.0385),
+  b("mother-angelica", "Mother Angelica", "catholic", "modern_witness", 33.5186, -86.8104),
+  b("carlo-acutis", "Carlo Acutis", "catholic", "modern_witness", 45.4642, 9.1900),
+  b("pier-giorgio", "Pier Giorgio Frassati", "catholic", "modern_witness", 45.0703, 7.6869),
+  b("josephine-bakhita", "Saint Josephine Bakhita", "catholic", "global_saint", 12.8628, 30.2176),
+  b("andrew-kim", "Saint Andrew Kim Taegon", "catholic", "global_saint", 36.3504, 127.3845),
+  b("lorenzo-ruiz", "Saint Lorenzo Ruiz", "catholic", "global_saint", 14.5995, 120.9842),
+  b("alphonsa", "Saint Alphonsa", "catholic", "global_saint", 9.5916, 76.5222),
+  b("rose-lima", "Saint Rose of Lima", "catholic", "global_saint", -12.0464, -77.0428),
+  b("martin-de-porres", "Saint Martín de Porres", "catholic", "global_saint", -12.0464, -77.0428),
+  b("juan-diego", "Saint Juan Diego", "catholic", "global_saint", 19.4847, -99.1171),
+  b("mary-mackillop", "Saint Mary MacKillop", "catholic", "global_saint", -37.8136, 144.9631),
+  b("kateri", "Saint Kateri Tekakwitha", "catholic", "global_saint", 42.9334, -74.3430),
+  b("seton", "Saint Elizabeth Ann Seton", "catholic", "global_saint", 39.7045, -77.3269),
+  b("drexel", "Saint Katharine Drexel", "catholic", "global_saint", 39.9526, -75.1652),
+];
 const AUDIO_BY_MOOD = {
   reflective: ASSETS.audio.reflective,
   hopeful: ASSETS.audio.hopeful,
