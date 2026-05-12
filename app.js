@@ -600,9 +600,57 @@ function setupMoodUI() {
 }
 
 function setupSearchUI() {
-  on("searchInput", "keydown", (e) => {
+  const input = $("searchInput");
+  if (!input) return;
+
+  input.addEventListener("keydown", async (e) => {
     if (e.key !== "Enter") return;
-    showNotice("Search captured. Next step: wire to public candle lookup.");
+
+    const q = input.value.trim().toLowerCase();
+    if (!q) return;
+
+    const allCandles = [...layerCloseCandles];
+
+    let found = null;
+
+    for (const entity of allCandles) {
+      const name =
+        (
+          entity?.properties?.displayName?.getValue?.() ??
+          entity?.properties?.displayName ??
+          ""
+        ).toLowerCase();
+
+      if (name.includes(q)) {
+        found = entity;
+        break;
+      }
+    }
+
+    if (!found) {
+      showNotice(
+        "No public candle matched that search.",
+        "Search"
+      );
+      return;
+    }
+
+    const pos = found.position.getValue(Cesium.JulianDate.now());
+
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromElements(
+        pos.x,
+        pos.y,
+        pos.z + 250000
+      ),
+      duration: 2.6,
+      easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
+      complete: () => {
+        setTimeout(() => {
+          openCandleCard(found);
+        }, 700);
+      },
+    });
   });
 }
 
@@ -824,17 +872,11 @@ function buildLayers() {
       )
   : [];
 
-const baselineCandles = makePoints().map((p, i) => ({
-  ...p,
-  c: {
-    id: `baseline-${i}`,
-    displayName: "A Light of Remembrance",
-    visibility: "Baseline",
-    candleKey: "baseline_universal",
-    isBaseline: true,
-    baselineLayer: "universal",
-    baselineType: "seed",
-  },
+const baselineCandles = BASELINE_CANDLES.map((c) => ({
+  lon: c.lon,
+  lat: c.lat,
+  c
+}));
 }));
 
 const pts = [...realCandles, ...baselineCandles];
