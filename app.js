@@ -81,48 +81,60 @@ async function fetchBubbleCandles() {
 
     bubbleApiCandles = results
       .filter((c) => c.is_world_ready_boolean === true)
-      .map((c) => ({
-        id: c._id,
-        candle_id: c._id,
+      .map((c) => {
+        const isBaseline =
+          c.is_baseline_candle_boolean === true ||
+          String(c.world_visibility_text || "").toLowerCase() === "baseline";
 
-        cesium_latitude:
-          c.cesium_latitude_number ?? c.lat_number ?? c.lat,
-        cesium_longitude:
-          c.cesium_longitude_number ??
-          c.lon_number ??
-          c.lng_number ??
-          c.longitude_number,
-
-        displayName:
-          c.honoree_display_name_text ||
-          c.honoree_name_text ||
-          c.title_text ||
-          c.owner_display_name_text ||
-          "A Beloved Soul",
-
-        visibility:
-          c.world_visibility_text ||
-          c.visibility_option_visibility ||
-          "Private",
-
-        isBaseline: c.is_baseline_candle_boolean === true,
-        baselineLayer: c.baseline_layer_text || null,
-        baselineType: c.baseline_type_text || null,
-
-        candleKey:
+        const candleKey =
           c.candleKey_text ||
-          (c.is_baseline_candle_boolean
-            ? `baseline_${String(c.baseline_layer_text || "universal").toLowerCase()}`
+          c.candlekey_text ||
+          (isBaseline
+            ? `baseline_${String(
+                c.baseline_layer_text || "universal"
+              ).toLowerCase()}`
             : c.is_permanent_boolean
               ? c.is_public_boolean
                 ? "perm_public"
                 : "perm_locked"
               : c.is_public_boolean
                 ? "temp_public"
-                : "temp_locked"),
+                : "temp_locked");
 
-        ownerId: c.owner_user || c.Creator || null,
-      }))
+        return {
+          id: c._id,
+          candle_id: c._id,
+
+          cesium_latitude:
+            c.cesium_latitude_number ?? c.lat_number ?? c.lat,
+
+          cesium_longitude:
+            c.cesium_longitude_number ??
+            c.lon_number ??
+            c.lng_number ??
+            c.longitude_number,
+
+          displayName:
+            c.honoree_display_name_text ||
+            c.honoree_name_text ||
+            c.title_text ||
+            c.owner_display_name_text ||
+            "A Beloved Soul",
+
+          visibility:
+            c.world_visibility_text ||
+            c.visibility_option_visibility ||
+            "Private",
+
+          isBaseline,
+          baselineLayer: c.baseline_layer_text || null,
+          baselineType: c.baseline_type_text || null,
+
+          candleKey,
+
+          ownerId: c.owner_user || c.Creator || null,
+        };
+      })
       .filter(
         (c) =>
           Number.isFinite(Number(c.cesium_latitude)) &&
@@ -130,6 +142,8 @@ async function fetchBubbleCandles() {
       );
 
     console.log("[Requiem] Bubble candles loaded:", bubbleApiCandles.length);
+    console.log("[Requiem] Bubble candles:", bubbleApiCandles);
+
     return bubbleApiCandles;
   } catch (err) {
     console.error("[Requiem] Bubble candle API failed:", err);
