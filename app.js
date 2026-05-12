@@ -585,18 +585,34 @@ function buildLayers() {
 
   const bubbleCandles = getBubbleCandles();
 
-  const pts = bubbleCandles
-    ? bubbleCandles
-        .map((c) => ({
-          lon: Number(c.cesium_longitude ?? c.lon ?? c.longitude ?? c.lng),
-          lat: Number(c.cesium_latitude ?? c.lat ?? c.latitude),
-          c,
-        }))
-        .filter(
-          (x) =>
-            Number.isFinite(Number(x.lon)) && Number.isFinite(Number(x.lat))
-        )
-    : makePoints().map((p) => ({ ...p, c: null }));
+  const realCandles = bubbleCandles
+  ? bubbleCandles
+      .map((c) => ({
+        lon: Number(c.cesium_longitude ?? c.lon ?? c.longitude ?? c.lng),
+        lat: Number(c.cesium_latitude ?? c.lat ?? c.latitude),
+        c,
+      }))
+      .filter(
+        (x) =>
+          Number.isFinite(Number(x.lon)) &&
+          Number.isFinite(Number(x.lat))
+      )
+  : [];
+
+const baselineCandles = makePoints().map((p, i) => ({
+  ...p,
+  c: {
+    id: `baseline-${i}`,
+    displayName: "A Light of Remembrance",
+    visibility: "Baseline",
+    candleKey: "baseline_universal",
+    isBaseline: true,
+    baselineLayer: "universal",
+    baselineType: "seed",
+  },
+}));
+
+const pts = [...realCandles, ...baselineCandles];
 
   layerFarTwinkles = pts.slice(0, 180).map((p) =>
     viewer.entities.add({
