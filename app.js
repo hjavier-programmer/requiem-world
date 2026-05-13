@@ -1286,10 +1286,17 @@ function openCandleCard(entity) {
   hideCard();
 
   if (window.bubble_fn_open_memory_card && candleId) {
-    window.bubble_fn_open_memory_card(String(candleId));
-  } else {
-    showPrep("MEMORY_CARD");
-  }
+  alert("Bubble function found. Candle ID = " + String(candleId));
+  window.bubble_fn_open_memory_card(String(candleId));
+} else {
+  alert(
+    "Fallback. bubble_fn_open_memory_card exists? " +
+      !!window.bubble_fn_open_memory_card +
+      " | candleId = " +
+      String(candleId)
+  );
+  showPrep("MEMORY_CARD");
+}
 });
 
   if (candleKey === "perm_public" || candleKey === "perm_locked") {
