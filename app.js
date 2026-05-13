@@ -1282,11 +1282,15 @@ function openCandleCard(entity) {
     return;
   }
 
-  addBtn("View Memory Card", () => {
-    hideCard();
-    const ok = bubbleEmit("VIEW_MEMORY_CARD", payload);
-    if (!ok) showPrep("MEMORY_CARD");
-  });
+ addBtn("View Memory Card", () => {
+  hideCard();
+
+  if (window.bubble_fn_open_memory_card && candleId) {
+    window.bubble_fn_open_memory_card(String(candleId));
+  } else {
+    showPrep("MEMORY_CARD");
+  }
+});
 
   if (candleKey === "perm_public" || candleKey === "perm_locked") {
     addBtn("Enter Memorial Garden", () => {
