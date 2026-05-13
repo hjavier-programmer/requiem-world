@@ -1282,21 +1282,21 @@ function openCandleCard(entity) {
     return;
   }
 
- addBtn("View Memory Card", () => {
+addBtn("View Memory Card", () => {
   hideCard();
 
-  if (window.bubble_fn_open_memory_card && candleId) {
-  alert("Bubble function found. Candle ID = " + String(candleId));
-  window.bubble_fn_open_memory_card(String(candleId));
-} else {
-  alert(
-    "Fallback. bubble_fn_open_memory_card exists? " +
-      !!window.bubble_fn_open_memory_card +
-      " | candleId = " +
-      String(candleId)
-  );
-  showPrep("MEMORY_CARD");
-}
+  if (candleId && !String(candleId).startsWith("baseline-")) {
+    window.parent.postMessage(
+      {
+        source: "requiem-world",
+        type: "OPEN_MEMORY_CARD",
+        candleId: String(candleId),
+      },
+      "*"
+    );
+  } else {
+    showCard();
+  }
 });
 
   if (candleKey === "perm_public" || candleKey === "perm_locked") {
