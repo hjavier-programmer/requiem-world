@@ -218,6 +218,7 @@ const BASELINE_CANDLES = [
   b("corrie-ten-boom", "Corrie ten Boom", "christian", "witness", 52.3874, 4.6462),
   b("wurmbrand", "Richard Wurmbrand", "christian", "witness", 44.4268, 26.1025),
   b("watchman-nee", "Watchman Nee", "christian", "witness", 31.2304, 121.4737),
+  b("jesus-christ", "Jesus Christ", "christian", "sacred_center", 31.7683, 35.2137),
 
   // CATHOLIC — saints / mystics / doctors / popes
   b("francis-assisi", "Saint Francis of Assisi", "catholic", "saint", 43.0707, 12.6170),
@@ -872,15 +873,16 @@ function buildLayers() {
       )
   : [];
 
-const baselineCandles = BASELINE_CANDLES.map((c) => ({
-  lon: c.lon,
-  lat: c.lat,
-  c
-}));
-}));
+const baselineCandles = BASELINE_CANDLES
+  .filter((c) => canSeeBaseline(c.baselineLayer))
+  .map((c) => ({
+    lon: Number(c.cesium_longitude),
+    lat: Number(c.cesium_latitude),
+    c,
+  }));
 
 const pts = [...realCandles, ...baselineCandles];
-
+  
   layerFarTwinkles = pts.slice(0, 180).map((p) =>
     viewer.entities.add({
       position: Cesium.Cartesian3.fromDegrees(p.lon, p.lat, 0),
