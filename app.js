@@ -1133,19 +1133,52 @@ function flyToGroundView(entity) {
   if (!pos) return;
 
   const carto = Cesium.Cartographic.fromCartesian(pos);
-  const lon = carto.longitude;
-  const lat = carto.latitude;
-  const groundTarget = Cesium.Cartesian3.fromRadians(lon, lat, 2.0);
-  const sphere = new Cesium.BoundingSphere(groundTarget, 18.0);
 
-  viewer.camera.flyToBoundingSphere(sphere, {
-    duration: 2.25,
-    offset: new Cesium.HeadingPitchRange(
-      viewer.camera.heading,
-      Cesium.Math.toRadians(8),
-      260
-    ),
+  const lon = Cesium.Math.toDegrees(carto.longitude);
+  const lat = Cesium.Math.toDegrees(carto.latitude);
+
+  // Camera position slightly behind candle
+  const cameraOffset = Cesium.Cartesian3.fromDegrees(
+    lon,
+    lat - 0.0018,
+    120
+  );
+
+  const candleTarget = Cesium.Cartesian3.fromDegrees(
+    lon,
+    lat,
+    28
+  );
+
+  viewer.camera.flyTo({
+    destination: cameraOffset,
+
+    orientation: {
+      heading: Cesium.Math.toRadians(0),
+      pitch: Cesium.Math.toRadians(-12),
+      roll: 0,
+    },
+
+    duration: 2.8,
+
     easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
+
+    complete: () => {
+      viewer.camera.lookAt(
+        candleTarget,
+        new Cesium.HeadingPitchRange(
+          0,
+          Cesium.Math.toRadians(-8),
+          140
+        )
+      );
+
+      setTimeout(() => {
+        viewer.camera.lookAtTransform(
+          Cesium.Matrix4.IDENTITY
+        );
+      }, 100);
+    },
   });
 }
 
