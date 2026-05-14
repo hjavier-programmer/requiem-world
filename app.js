@@ -319,7 +319,11 @@ async function fetchBubbleCandles() {
     console.log("[Requiem RAW API]", results);
 
     bubbleApiCandles = results
-      .filter((c) => c.is_world_ready_boolean === true)
+      .filter((c) =>
+  String(c.is_world_ready_boolean).toLowerCase() === "true" ||
+  c.is_world_ready_boolean === true ||
+  c.is_world_ready_boolean === 1
+)
       .map((c) => {
         const isBaseline =
           c.is_baseline_candle_boolean === true ||
