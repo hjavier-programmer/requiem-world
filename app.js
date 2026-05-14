@@ -888,7 +888,11 @@ alert("Bubble candles received: " + JSON.stringify(bubbleCandles));
   : [];
 
 const baselineCandles = BASELINE_CANDLES
-  .filter((c) => canSeeBaseline(c.baselineLayer))
+.filter((c) =>
+  String(c.is_world_ready_boolean).toLowerCase() === "true" ||
+  c.is_world_ready_boolean === true ||
+  c.is_world_ready_boolean === 1
+)
   .map((c) => ({
     lon: Number(c.cesium_longitude),
     lat: Number(c.cesium_latitude),
