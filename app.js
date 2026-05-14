@@ -316,6 +316,7 @@ async function fetchBubbleCandles() {
     const res = await fetch(BUBBLE_CANDLE_API);
     const data = await res.json();
     const results = data?.response?.results || [];
+    const results = data
 
     bubbleApiCandles = results
       .filter((c) => c.is_world_ready_boolean === true)
