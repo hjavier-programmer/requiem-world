@@ -266,6 +266,18 @@ const BASELINE_CANDLES = [
   b("seton", "Saint Elizabeth Ann Seton", "catholic", "global_saint", 39.7045, -77.3269),
   b("drexel", "Saint Katharine Drexel", "catholic", "global_saint", 39.9526, -75.1652),
 ];
+window.addEventListener("message", (event) => {
+  if (!event.data) return;
+
+  if (event.data.source !== "requiem-bubble") return;
+  if (event.data.type !== "LOAD_CANDLES") return;
+
+  window.REQUIEM_CANDLES = event.data.candles || [];
+
+  if (typeof buildLayers === "function") {
+    buildLayers();
+  }
+});
 const AUDIO_BY_MOOD = {
   reflective: ASSETS.audio.reflective,
   hopeful: ASSETS.audio.hopeful,
