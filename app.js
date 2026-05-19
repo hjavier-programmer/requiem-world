@@ -273,7 +273,8 @@ window.addEventListener("message", (event) => {
   if (event.data.type !== "LOAD_CANDLES") return;
 
   window.REQUIEM_CANDLES = event.data.candles || [];
-
+alert("Loaded candles: " + window.REQUIEM_CANDLES.length);
+  
   if (typeof buildLayers === "function") {
     buildLayers();
   }
