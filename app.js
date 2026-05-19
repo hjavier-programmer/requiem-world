@@ -284,7 +284,6 @@ if (event.data.source !== "requiem-bubble") return;
   if (event.data.type !== "LOAD_CANDLES") return;
 
  window.REQUIEM_CANDLES = event.data.candles || [];
-alert("Loaded candles: " + window.REQUIEM_CANDLES.length);
 
 setTimeout(() => {
   if (typeof buildLayers === "function") {
