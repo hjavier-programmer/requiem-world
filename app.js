@@ -283,12 +283,27 @@ window.addEventListener("message", (event) => {
 if (event.data.source !== "requiem-bubble") return;
   if (event.data.type !== "LOAD_CANDLES") return;
 
-  window.REQUIEM_CANDLES = event.data.candles || [];
+ window.REQUIEM_CANDLES = event.data.candles || [];
 alert("Loaded candles: " + window.REQUIEM_CANDLES.length);
-  
+
+setTimeout(() => {
   if (typeof buildLayers === "function") {
     buildLayers();
   }
+
+  const candle = window.REQUIEM_CANDLES?.[0];
+
+  if (candle && viewer) {
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(
+        candle.cesium_longitude || candle.lng,
+        candle.cesium_latitude || candle.lat,
+        80000
+      ),
+      duration: 2
+    });
+  }
+}, 500);
 });
 const AUDIO_BY_MOOD = {
   reflective: ASSETS.audio.reflective,
