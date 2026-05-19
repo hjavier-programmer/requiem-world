@@ -890,7 +890,7 @@ function buildLayers() {
       )
   : [];
 
-const baselineCandles = BASELINE_CANDLES
+const baselineCandles = []
 .filter((c) =>
   String(c.is_world_ready_boolean).toLowerCase() === "true" ||
   c.is_world_ready_boolean === true ||
