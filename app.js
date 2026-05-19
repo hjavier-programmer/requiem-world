@@ -269,7 +269,9 @@ const BASELINE_CANDLES_DISABLED = [
 window.addEventListener("message", (event) => {
   if (!event.data) return;
 
-  if (event.data.source !== "requiem-bubble") return;
+ console.log("MESSAGE RECEIVED", event.data);
+
+if (event.data.source !== "requiem-bubble") return;
   if (event.data.type !== "LOAD_CANDLES") return;
 
   window.REQUIEM_CANDLES = event.data.candles || [];
