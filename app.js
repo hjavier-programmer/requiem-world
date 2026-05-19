@@ -74,7 +74,7 @@ function b(id, name, layer, type, lat, lon) {
   };
 }
 
-const BASELINE_CANDLES = [
+const BASELINE_CANDLES_DISABLED = [
   // UNIVERSAL — literary / storytelling
   b("shakespeare", "William Shakespeare", "universal", "literary", 52.1917, -1.7080),
   b("chaucer", "Geoffrey Chaucer", "universal", "literary", 51.5072, -0.1276),
