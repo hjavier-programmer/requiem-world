@@ -1567,7 +1567,7 @@ async function initCesium() {
 
   await applyBeautifulImagery(viewer);
 
-  await fetchBubbleCandles();
+ // await fetchBubbleCandles();
 
   buildLayers();
   setupCandleClick();
