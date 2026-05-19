@@ -901,7 +901,7 @@ function buildLayers() {
   layerCloseAuras = [];
   layerCloseCandles = [];
 
-  const bubbleCandles = getBubbleCandles();
+  const bubbleCandles = window.REQUIEM_CANDLES || [];
   
   const realCandles = bubbleCandles
   ? bubbleCandles
