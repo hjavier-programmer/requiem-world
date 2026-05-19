@@ -876,8 +876,6 @@ function buildLayers() {
 
   const bubbleCandles = getBubbleCandles();
   
-alert("Bubble candles received: " + JSON.stringify(bubbleCandles));
-  
   const realCandles = bubbleCandles
   ? bubbleCandles
       .map((c) => ({
