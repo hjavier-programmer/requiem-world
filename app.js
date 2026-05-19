@@ -266,6 +266,15 @@ const BASELINE_CANDLES_DISABLED = [
   b("seton", "Saint Elizabeth Ann Seton", "catholic", "global_saint", 39.7045, -77.3269),
   b("drexel", "Saint Katharine Drexel", "catholic", "global_saint", 39.9526, -75.1652),
 ];
+
+window.parent.postMessage(
+  {
+    source: "requiem-world",
+    type: "READY_FOR_CANDLES"
+  },
+  "*"
+);
+
 window.addEventListener("message", (event) => {
   if (!event.data) return;
 
