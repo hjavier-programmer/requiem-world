@@ -285,6 +285,8 @@ if (event.data.source !== "requiem-bubble") return;
 
  window.REQUIEM_CANDLES = event.data.candles || [];
 
+alert("World received " + window.REQUIEM_CANDLES.length + " candles");
+
 setTimeout(() => {
   if (typeof buildLayers === "function") {
     buildLayers();
