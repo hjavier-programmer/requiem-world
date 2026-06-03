@@ -1332,20 +1332,21 @@ function openCandleCard(entity) {
   }
 
 addBtn("View Memory Card", () => {
+  console.log("VIEW MEMORY CARD CLICKED");
+  console.log("CANDLE ID:", candleId);
+
   hideCard();
 
-  if (candleId && !String(candleId).startsWith("baseline-")) {
-    window.parent.postMessage(
-      {
-        source: "requiem-world",
-        type: "OPEN_MEMORY_CARD",
-        candleId: String(candleId),
-      },
-      "*"
-    );
-  } else {
-    showCard();
-  }
+  window.parent.postMessage(
+    {
+      source: "requiem-world",
+      type: "OPEN_MEMORY_CARD",
+      candleId: String(candleId || ""),
+    },
+    "*"
+  );
+
+  console.log("MESSAGE SENT TO BUBBLE");
 });
 
   if (candleKey === "perm_public" || candleKey === "perm_locked") {
