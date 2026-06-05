@@ -1338,7 +1338,7 @@ addBtn("View Memory Card", () => {
     {
       source: "requiem-world",
       type: "OPEN_MEMORY_CARD",
-      candleId: String(candleId || ""),
+      candleId: String(candleId || "")
     },
     "*"
   );
