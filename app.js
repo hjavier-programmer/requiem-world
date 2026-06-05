@@ -1332,10 +1332,19 @@ function openCandleCard(entity) {
   }
 
 addBtn("View Memory Card", () => {
-  console.log("VIEW MEMORY CARD CLICKED");
-  console.log("CANDLE ID:", candleId);
+  alert("VIEW MEMORY CARD CLICKED: " + candleId);
+
+  window.parent.postMessage(
+    {
+      source: "requiem-world",
+      type: "OPEN_MEMORY_CARD",
+      candleId: String(candleId || "")
+    },
+    "*"
+  );
 
   hideCard();
+});
 
   window.parent.postMessage(
     {
