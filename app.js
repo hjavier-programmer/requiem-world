@@ -1346,18 +1346,6 @@ addBtn("View Memory Card", () => {
   hideCard();
 });
 
-  window.parent.postMessage(
-    {
-      source: "requiem-world",
-      type: "OPEN_MEMORY_CARD",
-      candleId: String(candleId || ""),
-    },
-    "*"
-  );
-
-  console.log("MESSAGE SENT TO BUBBLE");
-});
-
   if (candleKey === "perm_public" || candleKey === "perm_locked") {
     addBtn("Enter Memorial Garden", () => {
       hideCard();
