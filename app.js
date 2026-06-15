@@ -285,7 +285,7 @@ if (event.data.source !== "requiem-bubble") return;
 
  window.REQUIEM_CANDLES = event.data.candles || [];
 
-alert("World received " + window.REQUIEM_CANDLES.length + " candles");
+console.log("World received " + window.REQUIEM_CANDLES.length + " candles");
 
 setTimeout(() => {
   if (typeof buildLayers === "function") {
@@ -1332,7 +1332,7 @@ function openCandleCard(entity) {
   }
 
 addBtn("View Memory Card", () => {
-  alert("VIEW MEMORY CARD CLICKED: " + candleId);
+  console.log("VIEW MEMORY CARD CLICKED: " + candleId);
 
   window.parent.postMessage(
     {
