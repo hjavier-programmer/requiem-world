@@ -367,7 +367,6 @@ function isTemporaryCandleActive(c) {
 
 async function fetchBubbleCandles() {
 
-async function fetchBubbleCandles() {
   try {
     const res = await fetch(BUBBLE_CANDLE_API);
     const data = await res.json();
