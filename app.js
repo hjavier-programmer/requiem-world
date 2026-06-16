@@ -330,6 +330,43 @@ function isSavedCandleId(id) {
 
 let bubbleApiCandles = null;
 
+function isAllSoulsDay(date = new Date()) {
+  return date.getMonth() === 10 && date.getDate() === 2;
+}
+
+function isTrueValue(value) {
+  return (
+    value === true ||
+    value === 1 ||
+    String(value || "").toLowerCase() === "true" ||
+    String(value || "").toLowerCase() === "yes"
+  );
+}
+
+function isTemporaryCandleActive(c) {
+  if (isAllSoulsDay()) return true;
+
+  const isTemporary =
+    isTrueValue(c.is_temporary_boolean) ||
+    isTrueValue(c.is_temporary) ||
+    isTrueValue(c.has_expiry_boolean) ||
+    isTrueValue(c.has_expiry);
+
+  if (!isTemporary) return true;
+
+  const expiresAt =
+    c.temp_expires_at_date ||
+    c.temp_expires_at ||
+    c.expires_at_date ||
+    c.expires_at;
+
+  if (!expiresAt) return false;
+
+  return new Date(expiresAt) > new Date();
+}
+
+async function fetchBubbleCandles() {
+
 async function fetchBubbleCandles() {
   try {
     const res = await fetch(BUBBLE_CANDLE_API);
@@ -337,13 +374,16 @@ async function fetchBubbleCandles() {
     const results = data?.response?.results || [];
     console.log("[Requiem RAW API]", results);
 
-    bubbleApiCandles = results
-      .filter((c) =>
-  String(c.is_world_ready_boolean).toLowerCase() === "true" ||
-  c.is_world_ready_boolean === true ||
-  c.is_world_ready_boolean === 1
-)
-      .map((c) => {
+   bubbleApiCandles = results
+  .filter((c) =>
+    (
+      String(c.is_world_ready_boolean).toLowerCase() === "true" ||
+      c.is_world_ready_boolean === true ||
+      c.is_world_ready_boolean === 1
+    ) &&
+    isTemporaryCandleActive(c)
+  )
+  .map((c) => {
         const isBaseline =
           c.is_baseline_candle_boolean === true ||
           String(c.world_visibility_text || "").toLowerCase() === "baseline";
