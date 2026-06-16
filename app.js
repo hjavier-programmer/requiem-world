@@ -1267,9 +1267,10 @@ function openCandleCard(entity) {
   }
 
   const candleKey =
-    entity?.properties?.candleKey?.getValue?.() ??
-    entity?.properties?.candleKey ??
-    "perm_public";
+  entity?.properties?.candleKey?.getValue?.() ??
+  entity?.properties?.candleKey ??
+  entity?.candleKey ??
+  "perm_public";
 
   const candleId =
     entity?.properties?.candleId?.getValue?.() ??
