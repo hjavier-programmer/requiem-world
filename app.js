@@ -384,21 +384,22 @@ async function fetchBubbleCandles() {
           c.is_baseline_candle_boolean === true ||
           String(c.world_visibility_text || "").toLowerCase() === "baseline";
 
-        const candleKey =
-          c.candleKey_text ||
-          c.candlekey_text ||
-          (isBaseline
-            ? `baseline_${String(
-                c.baseline_layer_text || "universal"
-              ).toLowerCase()}`
-            : c.is_permanent_boolean
-              ? c.is_public_boolean
-                ? "perm_public"
-                : "perm_locked"
-              : c.is_public_boolean
-                ? "temp_public"
-                : "temp_locked");
-
+       const candleKey =
+  c.CandleKey ||
+  c.candleKey ||
+  c.candleKey_text ||
+  c.candlekey_text ||
+  (isBaseline
+    ? `baseline_${String(
+        c.baseline_layer_text || "universal"
+      ).toLowerCase()}`
+    : c.is_permanent_boolean
+    ? c.is_public_boolean
+      ? "perm_public"
+      : "perm_locked"
+    : c.is_public_boolean
+    ? "temp_public"
+    : "temp_locked");
         return {
           id: c._id,
           candle_id: c._id,
