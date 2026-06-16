@@ -389,11 +389,10 @@ async function fetchBubbleCandles() {
   c.candleKey ||
   c.candleKey_text ||
   c.candlekey_text ||
-  (isBaseline
-    ? `baseline_${String(
-        c.baseline_layer_text || "universal"
-      ).toLowerCase()}`;
-    : "perm_public");
+ (isBaseline
+  ? `baseline_${String(c.baseline_layer_text || "universal").toLowerCase()}`
+  : "perm_public");
+    
         return {
           id: c._id,
           candle_id: c._id,
