@@ -1361,53 +1361,19 @@ addBtn("View Memory Card", () => {
   hideCard();
 });
 
-  if (candleKey === "perm_public" || candleKey === "perm_locked") {
-    /*
-    addBtn("Enter Memorial Garden", () => {
-      hideCard();
-      const ok = bubbleEmit("ENTER_MEMORIAL_GARDEN", payload);
-      if (!ok) showPrep("MEMORIAL_GARDEN");
-    });
+ addBtn("Ground View", () => {
+  hideCard();
+  flyToGroundView(entity);
+});
 
-    addBtn("Add to My Candles", () => {
-      hideCard();
-      const ok = bubbleEmit("ADD_TO_MY_CANDLES", payload);
-      if (!ok) showPrep("MY_CANDLES");
-    });
-
-    addBtn("Buy Requiem Stone", () => {
-      hideCard();
-      const ok = bubbleEmit("BUY_STONE", payload);
-      if (!ok) showPrep("STONES");
-    });
-  }
-*/
-  addBtn("Ground View", () => {
+addBtn(
+  "Return",
+  () => {
     hideCard();
-    flyToGroundView(entity);
-  });
-/*
-  if (candleKey === "perm_public") {
-    addBtn(
-      "Light a Temporary Candle",
-      () => {
-        hideCard();
-        const ok = bubbleEmit("LIGHT_TEMP_CANDLE", payload);
-        if (!ok) showNotice(blessingLine(), "Light a Temporary Candle");
-      },
-      true
-    );
-  } else {
-  */
-    addBtn(
-      "Return",
-      () => {
-        hideCard();
-        returnToHome();
-      },
-      true
-    );
-  }
+    returnToHome();
+  },
+  true
+);
 
   showCard();
 }
