@@ -376,12 +376,9 @@ async function fetchBubbleCandles() {
 
    bubbleApiCandles = results
   .filter((c) =>
-    (
-      String(c.is_world_ready_boolean).toLowerCase() === "true" ||
-      c.is_world_ready_boolean === true ||
-      c.is_world_ready_boolean === 1
-    ) &&
-    isTemporaryCandleActive(c)
+    String(c.is_world_ready_boolean).toLowerCase() === "true" ||
+    c.is_world_ready_boolean === true ||
+    c.is_world_ready_boolean === 1
   )
   .map((c) => {
         const isBaseline =
