@@ -384,14 +384,18 @@ async function fetchBubbleCandles() {
           c.is_baseline_candle_boolean === true ||
           String(c.world_visibility_text || "").toLowerCase() === "baseline";
 
-       const candleKey =
+      const candleKey =
   c.CandleKey ||
   c.candleKey ||
   c.candleKey_text ||
   c.candlekey_text ||
- (isBaseline
-  ? `baseline_${String(c.baseline_layer_text || "universal").toLowerCase()}`
-  : "perm_public");
+  (
+    isBaseline
+      ? `baseline_${String(
+          c.baseline_layer_text || "universal"
+        ).toLowerCase()}`
+      : "perm_public"
+  );
     
         return {
           id: c._id,
