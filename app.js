@@ -1405,8 +1405,12 @@ function setupCandleClick() {
       }
     }
 
-    if (!candleEntity) return;
-    openCandleCard(candleEntity);
+   if (!candleEntity) return;
+
+const card = $("card");
+if (card && !card.classList.contains("rq-hidden")) return;
+
+openCandleCard(candleEntity);
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 }
 
