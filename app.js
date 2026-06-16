@@ -474,7 +474,13 @@ function hideCard() {
 }
 
 function showCard() {
-  show($("card"));
+  const card = $("card");
+  if (!card) return;
+
+  card.classList.remove("rq-hidden");
+  card.style.display = "flex";
+  card.style.opacity = "1";
+  card.style.pointerEvents = "auto";
 }
 
 function wireModalClose(modalId, closeId) {
