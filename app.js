@@ -292,17 +292,8 @@ setTimeout(() => {
     buildLayers();
   }
 
-  const candle = window.REQUIEM_CANDLES?.[0];
-
-  if (candle && viewer) {
-    viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(
-        candle.cesium_longitude || candle.lng,
-        candle.cesium_latitude || candle.lat,
-        80000
-      ),
-      duration: 2
-    });
+  if (viewer) {
+    viewer.scene.requestRender();
   }
 }, 500);
 });
