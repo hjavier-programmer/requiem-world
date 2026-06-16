@@ -1362,6 +1362,7 @@ addBtn("View Memory Card", () => {
 });
 
   if (candleKey === "perm_public" || candleKey === "perm_locked") {
+    /*
     addBtn("Enter Memorial Garden", () => {
       hideCard();
       const ok = bubbleEmit("ENTER_MEMORIAL_GARDEN", payload);
@@ -1380,12 +1381,12 @@ addBtn("View Memory Card", () => {
       if (!ok) showPrep("STONES");
     });
   }
-
+*/
   addBtn("Ground View", () => {
     hideCard();
     flyToGroundView(entity);
   });
-
+/*
   if (candleKey === "perm_public") {
     addBtn(
       "Light a Temporary Candle",
@@ -1397,6 +1398,7 @@ addBtn("View Memory Card", () => {
       true
     );
   } else {
+  */
     addBtn(
       "Return",
       () => {
