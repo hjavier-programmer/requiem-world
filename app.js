@@ -394,7 +394,13 @@ async function fetchBubbleCandles() {
       ? `baseline_${String(
           c.baseline_layer_text || "universal"
         ).toLowerCase()}`
-      : "perm_public"
+: isTrueValue(c.is_temporary_boolean) || isTrueValue(c.is_temporary)
+  ? (isTrueValue(c.is_public_boolean) || String(c.visibility_text || c.visibility_option_visibility || "").toLowerCase() === "public"
+      ? "temp_public"
+      : "temp_locked")
+  : (isTrueValue(c.is_public_boolean) || String(c.visibility_text || c.visibility_option_visibility || "").toLowerCase() === "public"
+      ? "perm_public"
+      : "perm_locked")
   );
     
         return {
