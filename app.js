@@ -1026,10 +1026,12 @@ const pub =
 
 let candleKey = rawKey;
 
-if (temp && pub) candleKey = "temp_public";
-else if (temp && !pub) candleKey = "temp_private";
-else if (!temp && pub) candleKey = "perm_public";
-else candleKey = "perm_private";
+if (!candleKey) {
+  if (temp && pub) candleKey = "temp_public";
+  else if (temp && !pub) candleKey = "temp_private";
+  else if (!temp && pub) candleKey = "perm_public";
+  else candleKey = "perm_private";
+}
 
     const img = CANDLE_IMG[candleKey] || CANDLE_IMG.perm_public;
 
