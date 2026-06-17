@@ -701,23 +701,23 @@ function setupSearchUI() {
       return;
     }
 
-    const pos = found.position.getValue(Cesium.JulianDate.now());
+   const carto = Cesium.Cartographic.fromCartesian(pos);
+const destination = Cesium.Cartesian3.fromRadians(
+  carto.longitude,
+  carto.latitude,
+  250000
+);
 
-    viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromElements(
-        pos.x,
-        pos.y,
-        pos.z + 250000
-      ),
-      duration: 2.6,
-      easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
-      complete: () => {
-        setTimeout(() => {
-          openCandleCard(found);
-        }, 700);
-      },
-    });
-  });
+viewer.camera.flyTo({
+  destination,
+  duration: 2.6,
+  easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
+  complete: () => {
+    setTimeout(() => {
+      openCandleCard(found);
+    }, 700);
+  },
+});
 }
 
 let viewer = null;
