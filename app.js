@@ -1032,8 +1032,7 @@ if (!candleKey) {
   else if (!temp && pub) candleKey = "perm_public";
   else candleKey = "perm_private";
 }
-
-    const img = CANDLE_IMG[candleKey] || CANDLE_IMG.perm_public;
+const img = CANDLE_IMG[candleKey] || CANDLE_IMG.temp_public;
 
     const isLocked =
       candleKey === "temp_private" ||
