@@ -1289,9 +1289,9 @@ function openCandleCard(entity) {
 
  const typeLabel = isBaseline
   ? "Baseline Candle"
-  candleKey === "perm_public" || candleKey === "perm_private"
+  : candleKey === "perm_public" || candleKey === "perm_private"
   ? "Permanent Candle"
-  candleKey === "temp_public" || candleKey === "temp_private"
+  : candleKey === "temp_public" || candleKey === "temp_private"
   ? "Temporary Candle"
   : "Candle";
 
