@@ -1184,7 +1184,7 @@ function isOwnerOfEntity(entity) {
     entity?.properties?.ownerId?.getValue?.() ??
     entity?.properties?.ownerId ??
     null;
- return true;
+return true;
 }
 
 function isPublicEffective(entity) {
