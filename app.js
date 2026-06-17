@@ -1184,7 +1184,7 @@ function isOwnerOfEntity(entity) {
     entity?.properties?.ownerId?.getValue?.() ??
     entity?.properties?.ownerId ??
     null;
-return true;
+return !!(CURRENT_USER_ID && ownerId && CURRENT_USER_ID === ownerId);
 }
 
 function isPublicEffective(entity) {
