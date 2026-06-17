@@ -1309,6 +1309,15 @@ function openCandleCard(entity) {
   const publicEffective = isPublicEffective(entity);
   const saved = isSavedCandleId(candleId);
 
+console.log("CARD DEBUG", {
+  name: readDisplayName(entity),
+  candleKey,
+  isTemporary:
+    entity?.properties?.isTemporary?.getValue?.() ??
+    entity?.properties?.isTemporary,
+  rawProps: entity?.properties
+});
+
  let typeLabel = "Candle";
 
 if (isBaseline) {
