@@ -705,7 +705,7 @@ function setupSearchUI() {
 const destination = Cesium.Cartesian3.fromRadians(
   carto.longitude,
   carto.latitude,
-  250000
+  90000
 );
 
 viewer.camera.flyTo({
