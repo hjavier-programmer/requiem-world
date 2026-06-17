@@ -701,8 +701,7 @@ function setupSearchUI() {
       return;
     }
 
-   const carto = Cesium.Cartographic.fromCartesian(pos);
-const destination = Cesium.Cartesian3.fromRadians(
+  const destination = Cesium.Cartesian3.fromRadians(
   carto.longitude,
   carto.latitude,
   90000
