@@ -701,7 +701,10 @@ function setupSearchUI() {
       return;
     }
 
-  const destination = Cesium.Cartesian3.fromRadians(
+  const pos = found.position.getValue(Cesium.JulianDate.now());
+const carto = Cesium.Cartographic.fromCartesian(pos);
+
+const destination = Cesium.Cartesian3.fromRadians(
   carto.longitude,
   carto.latitude,
   90000
