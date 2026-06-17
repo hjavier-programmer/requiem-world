@@ -720,6 +720,7 @@ viewer.camera.flyTo({
     }, 700);
   },
 });
+  });
 }
 
 let viewer = null;
