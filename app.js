@@ -1000,14 +1000,23 @@ const pts = [...realCandles, ...baselineCandles];
   const HOVER_METERS = 28;
 
   pts.slice(0, 140).forEach((p, i) => {
-    let candleKey = "temp_public";
+    const rawKey = String(p.c?.candleKey || p.c?.candleKey_text || "").trim();
 
-    if (p.c?.candleKey) candleKey = String(p.c.candleKey);
-    else {
-      if (i % 11 === 0) candleKey = "temp_private";
-      else if (i % 9 === 0) candleKey = "perm_private";
-      else if (i % 4 === 0) candleKey = "perm_public";
-    }
+const temp =
+  isTrueValue(p.c?.is_temporary) ||
+  isTrueValue(p.c?.is_temporary_boolean);
+
+const pub =
+  isTrueValue(p.c?.is_public) ||
+  isTrueValue(p.c?.is_public_boolean) ||
+  String(p.c?.visibility || "").toLowerCase() === "public";
+
+let candleKey = rawKey;
+
+if (temp && pub) candleKey = "temp_public";
+else if (temp && !pub) candleKey = "temp_private";
+else if (!temp && pub) candleKey = "perm_public";
+else candleKey = "perm_private";
 
     const img = CANDLE_IMG[candleKey] || CANDLE_IMG.perm_public;
 
