@@ -1342,18 +1342,33 @@ function openCandleCard(entity) {
 
   if (actions) actions.innerHTML = "";
 
-  if (!publicEffective) {
-    addBtn(
-      "Return",
-      () => {
-        hideCard();
-        returnToHome();
-      },
-      true
-    );
-    showCard();
-    return;
+ if (!publicEffective) {
+  if (cardTitle) cardTitle.textContent = "Private Remembrance";
+
+  if (cardSubtitle) {
+    cardSubtitle.innerHTML = `
+      <strong>Someone mattered.</strong><br>
+      <strong>Someone is remembered.</strong><br><br>
+      Privacy is respected.<br>
+      Worth is unchanged.<br><br>
+      <strong>Dignity is always equal.</strong>
+    `;
   }
+
+  if (actions) actions.innerHTML = "";
+
+  addBtn(
+    "Return",
+    () => {
+      hideCard();
+      returnToHome();
+    },
+    true
+  );
+
+  showCard();
+  return;
+}
 
 addBtn("View Memory Card", () => {
   console.log("VIEW MEMORY CARD CLICKED: " + candleId);
