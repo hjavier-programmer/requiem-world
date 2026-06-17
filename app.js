@@ -384,7 +384,20 @@ async function fetchBubbleCandles() {
           c.is_baseline_candle_boolean === true ||
           String(c.world_visibility_text || "").toLowerCase() === "baseline";
 
-     const candleKey = "perm_public";
+   const temp =
+  isTrueValue(c.is_temporary_boolean) ||
+  isTrueValue(c.is_temporary);
+
+const pub =
+  isTrueValue(c.is_public_boolean) ||
+  isTrueValue(c.is_public) ||
+  String(c.visibility_text || c.visibility || c.visibility_option_visibility || "").toLowerCase() === "public";
+
+const candleKey =
+  temp && pub ? "temp_public" :
+  temp && !pub ? "temp_private" :
+  !temp && pub ? "perm_public" :
+  "perm_private";
     
         return {
           id: c._id,
