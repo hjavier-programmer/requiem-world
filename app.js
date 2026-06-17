@@ -1026,12 +1026,11 @@ const pub =
 
 let candleKey = rawKey;
 
-if (!candleKey) {
-  if (temp && pub) candleKey = "temp_public";
-  else if (temp && !pub) candleKey = "temp_private";
-  else if (!temp && pub) candleKey = "perm_public";
-  else candleKey = "perm_private";
-}
+if (temp && pub) candleKey = "temp_public";
+else if (temp && !pub) candleKey = "temp_private";
+else if (!candleKey && !temp && pub) candleKey = "perm_public";
+else if (!candleKey) candleKey = "perm_private";
+
 const img = CANDLE_IMG[candleKey] || CANDLE_IMG.temp_public;
 
     const isLocked =
