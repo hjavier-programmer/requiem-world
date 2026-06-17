@@ -1287,13 +1287,15 @@ function openCandleCard(entity) {
   const publicEffective = isPublicEffective(entity);
   const saved = isSavedCandleId(candleId);
 
- const typeLabel = isBaseline
-  ? "Baseline Candle"
-  : candleKey === "perm_public" || candleKey === "perm_private"
-  ? "Permanent Candle"
-  : candleKey === "temp_public" || candleKey === "temp_private"
-  ? "Temporary Candle"
-  : "Candle";
+ let typeLabel = "Candle";
+
+if (isBaseline) {
+  typeLabel = "Baseline Candle";
+} else if (candleKey === "perm_public" || candleKey === "perm_private") {
+  typeLabel = "Permanent Candle";
+} else if (candleKey === "temp_public" || candleKey === "temp_private") {
+  typeLabel = "Temporary Candle";
+}
 
   const displayName = readDisplayName(entity);
   const title = publicEffective ? displayName || typeLabel : "Private Candle";
