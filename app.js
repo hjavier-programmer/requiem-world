@@ -1375,19 +1375,30 @@ if (isBaseline) {
   }
 
   if (actions) actions.innerHTML = "";
-
- if (!publicEffective) {
+if (!canSeePrivate) {
   if (cardTitle) cardTitle.textContent = "Private Remembrance";
 
   if (cardSubtitle) {
-    cardSubtitle.innerHTML = `
-      <strong>Someone mattered.</strong><br>
-      <strong>Someone is remembered.</strong><br><br>
-      Privacy is respected.<br>
-      Worth is unchanged.<br><br>
-      <strong>Dignity is always equal.</strong>
-    `;
-  }
+        cardSubtitle.innerHTML = `
+<div style="max-width:420px; line-height:1.55;">
+        <div style="font-size:16px; font-weight:700; color:#f7f0dc; margin-bottom:6px;">
+          Someone mattered.<br>
+          Someone is remembered.
+        </div>
+
+        <div style="height:1px; width:72px; background:rgba(215,173,50,.65); margin:14px 0;"></div>
+
+        <div style="font-size:14px; color:#d8d2c4;">
+          Privacy is respected.<br>
+          Worth is unchanged.
+        </div>
+
+        <div style="font-size:14px; font-weight:700; color:#f7f0dc; margin-top:16px;">
+          Dignity is always equal.
+        </div>
+           </div>
+      `;
+}
 
   if (actions) actions.innerHTML = "";
 
