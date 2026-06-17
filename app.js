@@ -1189,7 +1189,9 @@ function isOwnerOfEntity(entity) {
     entity?.properties?.ownerId?.getValue?.() ??
     entity?.properties?.ownerId ??
     null;
-return !!(CURRENT_USER_ID && ownerId && CURRENT_USER_ID === ownerId);
+
+  const currentUserId = window.REQUIEM_USER_ID || null;
+  return !!(currentUserId && ownerId && currentUserId === ownerId);
 }
 
 function isPublicEffective(entity) {
