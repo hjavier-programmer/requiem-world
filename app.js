@@ -31,9 +31,9 @@ const ASSETS = {
 };
 
 const CANDLE_IMG = {
-  temp_locked: ASSETS.candles.lockedTemporary,
+  temp_private: ASSETS.candles.lockedTemporary,
   temp_public: ASSETS.candles.unlockedTemporary,
-  perm_locked: ASSETS.candles.lockedPermanent,
+  perm_private: ASSETS.candles.lockedPermanent,
   perm_public: ASSETS.candles.unlockedPermanent,
   baseline_universal: ASSETS.candles.unlockedPermanent,
   baseline_christian: ASSETS.candles.unlockedPermanent,
@@ -1004,16 +1004,16 @@ const pts = [...realCandles, ...baselineCandles];
 
     if (p.c?.candleKey) candleKey = String(p.c.candleKey);
     else {
-      if (i % 11 === 0) candleKey = "temp_locked";
-      else if (i % 9 === 0) candleKey = "perm_locked";
+      if (i % 11 === 0) candleKey = "temp_private";
+      else if (i % 9 === 0) candleKey = "perm_private";
       else if (i % 4 === 0) candleKey = "perm_public";
     }
 
     const img = CANDLE_IMG[candleKey] || CANDLE_IMG.perm_public;
 
     const isLocked =
-      candleKey === "temp_locked" ||
-      candleKey === "perm_locked" ||
+      candleKey === "temp_private" ||
+      candleKey === "perm_private" ||
       String(p.c?.visibility || "").toLowerCase() === "private";
 
     const candleId = String(p.c?.id ?? p.c?.candle_id ?? `demo-${i}`);
@@ -1176,7 +1176,7 @@ function isPublicEffective(entity) {
     entity?.properties?.isPublicFlag ??
     false;
 
-  const locked = key === "temp_locked" || key === "perm_locked";
+  const locked = key === "temp_private" || key === "perm_private";
 
   if (visibility) return true;
   if (!locked) return true;
@@ -1289,9 +1289,9 @@ function openCandleCard(entity) {
 
   const typeLabel = isBaseline
     ? "Baseline Candle"
-    : candleKey === "perm_public" || candleKey === "perm_locked"
+    : candleKey === "perm_public" || candleKey === "perm_private"
       ? "Permanent Candle"
-      : candleKey === "temp_public" || candleKey === "temp_locked"
+      : candleKey === "temp_public" || candleKey === "temp_private"
         ? "Temporary Candle"
         : "Candle";
 
