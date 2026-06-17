@@ -283,9 +283,14 @@ window.addEventListener("message", (event) => {
 if (event.data.source !== "requiem-bubble") return;
   if (event.data.type !== "LOAD_CANDLES") return;
 
- window.REQUIEM_CANDLES = event.data.candles || [];
+window.REQUIEM_CANDLES = event.data.candles || [];
 
-console.log("World received " + window.REQUIEM_CANDLES.length + " candles");
+window.REQUIEM_USER_ID =
+  event.data.currentUserId ||
+  event.data.CurrentUserId ||
+  null;
+
+console.log("Current User ID:", window.REQUIEM_USER_ID);
 
 setTimeout(() => {
   if (typeof buildLayers === "function") {
