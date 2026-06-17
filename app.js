@@ -718,8 +718,8 @@ viewer.camera.flyTo({
     setTimeout(() => {
       openCandleCard(found);
     }, 700);
-  },
-});
+    },
+  });
   });
 }
 
