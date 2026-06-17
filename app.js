@@ -1307,6 +1307,7 @@ function openCandleCard(entity) {
 
   const img = CANDLE_IMG[candleKey] || CANDLE_IMG.perm_public;
   const publicEffective = isPublicEffective(entity);
+  const canSeePrivate = publicEffective || isOwnerOfEntity(entity);
   const saved = isSavedCandleId(candleId);
 
 console.log("CARD DEBUG", {
@@ -1329,7 +1330,7 @@ if (isBaseline) {
 }
 
   const displayName = readDisplayName(entity);
-  const title = publicEffective ? displayName || typeLabel : "Private Candle";
+  const title = canSeePrivate ? displayName || typeLabel : "Private Candle";
 
   let subtitle = publicEffective
     ? `${typeLabel} • Public candle\nSome candles are public. Some are private. Dignity is always equal.`
