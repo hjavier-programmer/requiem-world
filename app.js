@@ -1681,4 +1681,3 @@ boot().catch((e) => {
   console.error("[Requiem boot error]", e);
   showNotice("A startup error occurred. Refresh and try again.", "Error");
 });
-}
