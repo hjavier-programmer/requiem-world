@@ -1487,7 +1487,7 @@ openCandleCard(candleEntity);
 
 setTimeout(() => {
   window.__rqCardLock = false;
-}, 350);
+}, 1000);
 
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 }
