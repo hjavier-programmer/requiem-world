@@ -1493,8 +1493,6 @@ setTimeout(() => {
 }
 
 function setupArrival() {
-
-function setupArrival() {
   const arrival = $("arrival");
   const enterBtn = $("enterBtn");
 
