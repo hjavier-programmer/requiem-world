@@ -1480,10 +1480,17 @@ function setupCandleClick() {
 const card = $("card");
 if (card && !card.classList.contains("rq-hidden")) return;
 
-openCandleCard(candleEntity);
-  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-}
+if (window.__rqCardLock) return;
+window.__rqCardLock = true;
 
+openCandleCard(candleEntity);
+
+setTimeout(() => {
+  window.__rqCardLock = false;
+}, 350);
+
+}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+  
 function setupArrival() {
   const arrival = $("arrival");
   const enterBtn = $("enterBtn");
