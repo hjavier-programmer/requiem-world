@@ -1490,6 +1490,7 @@ setTimeout(() => {
 }, 1000);
 
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+}
 
 function setupArrival() {
   const arrival = $("arrival");
