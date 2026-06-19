@@ -1288,6 +1288,26 @@ function openCandleCard(entity) {
   const cardSubtitle = $("cardSubtitle");
   const cardImg = $("cardImg");
   const actions = $("cardActions");
+  const props = candle.properties || {};
+
+const name =
+  props.name?.getValue?.() ||
+  props.displayName?.getValue?.() ||
+  props.honoree_full_name?.getValue?.() ||
+  "Remembered Soul";
+
+const subtitle =
+  props.memory_card_subtitle?.getValue?.() ||
+  props.cardSubtitle?.getValue?.() ||
+  props.subtitle?.getValue?.() ||
+  "A life remembered";
+
+const text =
+  props.memory_card_text?.getValue?.() ||
+  props.cardText?.getValue?.() ||
+  props.description?.getValue?.() ||
+  props.memoryText?.getValue?.() ||
+  "Every soul remembered. Every story sacred.";
 
   if (cardImg) {
     cardImg.style.width = "92px";
