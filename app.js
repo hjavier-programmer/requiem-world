@@ -1460,7 +1460,7 @@ function setupCandleClick() {
   const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
   handler.setInputAction((movement) => {
-    const picks = viewer.scene.drillPick(movement.position, 20);
+    const picks = viewer.scene.drillPick(movement.position, 30);
     if (!picks || !picks.length) return;
 
     let candleEntity = null;
