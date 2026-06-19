@@ -1374,7 +1374,7 @@ if (isBaseline) {
   if (cardTitle) cardTitle.textContent = title;
   if (cardSubtitle) cardSubtitle.textContent = subtitle;
   if (cardImg) cardImg.src = img;
-
+showCard();
   const payload = {
     candleId,
     candleKey,
