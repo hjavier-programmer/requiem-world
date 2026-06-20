@@ -1288,7 +1288,7 @@ function openCandleCard(entity) {
   const cardSubtitle = $("cardSubtitle");
   const cardImg = $("cardImg");
   const actions = $("cardActions");
-  const props = candle.properties || {};
+  const props = entity?.properties || {};
 
 const name =
   props.name?.getValue?.() ||
@@ -1296,7 +1296,7 @@ const name =
   props.honoree_full_name?.getValue?.() ||
   "Remembered Soul";
 
-const subtitle =
+const memorySubtitle =
   props.memory_card_subtitle?.getValue?.() ||
   props.cardSubtitle?.getValue?.() ||
   props.subtitle?.getValue?.() ||
