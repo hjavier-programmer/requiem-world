@@ -1374,7 +1374,7 @@ if (isBaseline) {
   if (cardTitle) cardTitle.textContent = title;
   if (cardSubtitle) cardSubtitle.textContent = subtitle;
   if (cardImg) cardImg.src = img;
-showCard();
+
   const payload = {
     candleId,
     candleKey,
@@ -1498,7 +1498,7 @@ function setupCandleClick() {
    if (!candleEntity) return;
 
 const card = $("card");
-if (card && !card.classList.contains("rq-hidden")) return;
+//if (card && !card.classList.contains("rq-hidden")) return;
 
 if (window.__rqCardLock) return;
 window.__rqCardLock = true;
