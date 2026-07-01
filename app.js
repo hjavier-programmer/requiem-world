@@ -944,6 +944,17 @@ function buildLayers() {
   layerCloseCandles = [];
 
   const bubbleCandles = window.REQUIEM_CANDLES || [];
+  console.log("REQUIEM_CANDLES COUNT:", bubbleCandles.length);
+console.log("RAPHAEL IN FEED?", bubbleCandles.find(c =>
+  String(
+    c.displayName ||
+    c.honoree_display_name ||
+    c.honoree_display_name_text ||
+    c.honoree_full_name ||
+    c.honoree_name_text ||
+    ""
+  ).toLowerCase().includes("raphael")
+));
   
   const realCandles = bubbleCandles
   ? bubbleCandles
