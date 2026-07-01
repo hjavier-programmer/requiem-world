@@ -1401,18 +1401,17 @@ if (isBaseline) {
   const visibilityLabel = publicEffective ? "Public" : "Private";
 
 let subtitle =
-  `${typeLabel.replace(" Candle", "")} • ${visibilityLabel}\nSome candles are public. Some are private. Dignity is always equal.`;
-  
-if (isBaseline) {
-  subtitle = "A seeded light in the World of Remembrance.";
-}
+  `${typeLabel.replace(" Candle", "")} • ${visibilityLabel}<br>Some candles are public. Some are private. Dignity is always equal.`;
 
   if (saved && publicEffective) {
     subtitle += "\nSaved candles glow slightly brighter.";
   }
 
   if (cardTitle) cardTitle.textContent = title;
-  if (cardSubtitle) cardSubtitle.textContent = subtitle;
+if (cardSubtitle) {
+  cardSubtitle.innerHTML = subtitle;
+}
+  
   if (cardImg) cardImg.src = img;
 
   const payload = {
