@@ -1343,10 +1343,30 @@ const text =
     entity?.properties?.isBaseline ??
     false;
 
-  const img = CANDLE_IMG[candleKey] || CANDLE_IMG.perm_public;
-  const publicEffective = isPublicEffective(entity);
-  const canSeePrivate = publicEffective || isOwnerOfEntity(entity);
-  const saved = isSavedCandleId(candleId);
+const publicEffective = isPublicEffective(entity);
+const canSeePrivate = publicEffective || isOwnerOfEntity(entity);
+const saved = isSavedCandleId(candleId);
+
+let displayCandleKey = candleKey;
+
+if (publicEffective && candleKey === "temp_private") {
+  displayCandleKey = "temp_public";
+}
+
+if (publicEffective && candleKey === "perm_private") {
+  displayCandleKey = "perm_public";
+}
+
+if (!publicEffective && candleKey === "temp_public") {
+  displayCandleKey = "temp_private";
+}
+
+if (!publicEffective && candleKey === "perm_public") {
+  displayCandleKey = "perm_private";
+}
+
+const img = CANDLE_IMG[displayCandleKey] || CANDLE_IMG.perm_public;
+
 
 console.log("CARD DEBUG", {
   name: readDisplayName(entity),
