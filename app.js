@@ -1358,7 +1358,6 @@ console.log("CARD DEBUG", {
 });
 
  let typeLabel = "Candle";
-
 if (isBaseline) {
   typeLabel = "Baseline Candle";
 } else if (candleKey === "perm_public" || candleKey === "perm_private") {
@@ -1370,13 +1369,14 @@ if (isBaseline) {
   const displayName = readDisplayName(entity);
   const title = canSeePrivate ? displayName || typeLabel : "Private Candle";
 
-  let subtitle = publicEffective
-    ? `${typeLabel} • Public candle\nSome candles are public. Some are private. Dignity is always equal.`
-    : "Details are privately held. The light remains.";
+  const visibilityLabel = publicEffective ? "Public" : "Private";
 
-  if (isBaseline) {
-    subtitle = "A seeded light in the World of Remembrance.";
-  }
+let subtitle =
+  `${typeLabel.replace(" Candle", "")} • ${visibilityLabel}\n\n✦ Some candles are public. Some are private.\nDignity is always equal.`;
+
+if (isBaseline) {
+  subtitle = "A seeded light in the World of Remembrance.";
+}
 
   if (saved && publicEffective) {
     subtitle += "\nSaved candles glow slightly brighter.";
