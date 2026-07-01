@@ -1017,7 +1017,7 @@ const pts = [...realCandles, ...baselineCandles];
 
   const HOVER_METERS = 28;
 
-  pts.slice(0, 140).forEach((p, i) => {
+  pts.slice(0, 500).forEach((p, i) => {
     const rawKey = String(p.c?.candleKey || p.c?.candleKey_text || "").trim();
 
 const temp =
