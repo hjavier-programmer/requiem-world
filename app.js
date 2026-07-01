@@ -1373,6 +1373,7 @@ if (isBaseline) {
 
 let subtitle =
   `${typeLabel.replace(" Candle", "")} • ${visibilityLabel}\n\nSome candles are public. Some are private.\nDignity is always equal.`;
+  
 if (isBaseline) {
   subtitle = "A seeded light in the World of Remembrance.";
 }
