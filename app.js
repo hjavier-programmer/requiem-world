@@ -1372,7 +1372,7 @@ if (isBaseline) {
   const visibilityLabel = publicEffective ? "Public" : "Private";
 
 let subtitle =
-  `${typeLabel.replace(" Candle", "")} • ${visibilityLabel}`;
+  `${typeLabel.replace(" Candle", "")} • ${visibilityLabel}\nSome candles are public. Some are private. Dignity is always equal.`;
   
 if (isBaseline) {
   subtitle = "A seeded light in the World of Remembrance.";
