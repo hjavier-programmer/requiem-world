@@ -1206,22 +1206,31 @@ function isOwnerOfEntity(entity) {
 }
 
 function isPublicEffective(entity) {
-  const key =
-    entity?.properties?.candleKey?.getValue?.() ??
-    entity?.properties?.candleKey ??
-    "perm_public";
+  const p = entity?.properties || {};
 
-  const visibility =
-    entity?.properties?.isPublicFlag?.getValue?.() ??
-    entity?.properties?.isPublicFlag ??
+  const rawVisibility =
+    p.visibility?.getValue?.() ??
+    p.visibility ??
+    "";
+
+  const visibility = String(rawVisibility).toLowerCase().trim();
+
+  const rawIsPublic =
+    p.isPublic?.getValue?.() ??
+    p.is_public?.getValue?.() ??
+    p.isPublic ??
+    p.is_public ??
     false;
 
-  const locked = key === "temp_private" || key === "perm_private";
+  const isPublic =
+    rawIsPublic === true ||
+    String(rawIsPublic).toLowerCase().trim() === "yes" ||
+    String(rawIsPublic).toLowerCase().trim() === "true";
 
-  if (visibility) return true;
-  if (!locked) return true;
+  if (visibility === "private") return false;
+  if (visibility === "public") return true;
 
-  return isOwnerOfEntity(entity);
+  return isPublic;
 }
 
 function readDisplayName(entity) {
