@@ -1381,6 +1381,8 @@ const img = CANDLE_IMG[displayCandleKey] || CANDLE_IMG.perm_public;
 console.log("CARD DEBUG", {
   name: readDisplayName(entity),
   candleKey,
+  publicEffective,
+  canSeePrivate,
   isTemporary:
     entity?.properties?.isTemporary?.getValue?.() ??
     entity?.properties?.isTemporary,
