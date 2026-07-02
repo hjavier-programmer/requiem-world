@@ -1441,7 +1441,7 @@ if (cardSubtitle) {
   }
 
   if (actions) actions.innerHTML = "";
-if (!canSeePrivate) {
+if (!publicEffective && !isOwnerOfEntity(entity)) {
   if (cardTitle) cardTitle.textContent = "Private Remembrance";
 
   if (cardSubtitle) {
